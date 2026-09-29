@@ -24,11 +24,11 @@ function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <Navbar />
       <Hero />
 
-      <section className="max-w-6xl mx-auto px-6 py-12">
+      <section className="max-w-6xl mx-auto px-6">
         <h2 className="text-3xl font-bold text-center mb-10">Features</h2>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
