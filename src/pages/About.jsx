@@ -126,7 +126,7 @@ export default function About() {
       <section className="relative overflow-hidden">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute left-1/2 top-0 h-80 w-[40rem] -translate-x-1/2 rounded-full bg-glow blur-3xl"
+          className="pointer-events-none absolute left-1/2 top-0 h-80 w-160 -translate-x-1/2 rounded-full bg-glow blur-3xl"
         />
 
         <div className="relative mx-auto max-w-6xl px-6 py-24 lg:py-32">
@@ -239,7 +239,7 @@ export default function About() {
               {index < steps.length - 1 && (
                 <span
                   aria-hidden="true"
-                  className="absolute left-[3.25rem] -right-5 top-5 hidden h-px bg-border lg:block"
+                  className="absolute left-13 -right-5 top-5 hidden h-px bg-border lg:block"
                 />
               )}
 
@@ -321,7 +321,7 @@ export default function About() {
 
       {/* CTA */}
       <section className="mx-auto max-w-6xl px-6 pb-24 pt-8">
-        <div className="flex flex-col items-start justify-between gap-8 rounded-3xl bg-gradient-to-r from-primary to-secondary p-10 md:flex-row md:items-center md:p-14">
+        <div className="flex flex-col items-start justify-between gap-8 rounded-3xl bg-linear-to-r from-primary to-secondary p-10 md:flex-row md:items-center md:p-14">
           <div className="max-w-xl">
             <h2 className="text-3xl font-bold md:text-4xl">
               Ready to Learn Smarter?

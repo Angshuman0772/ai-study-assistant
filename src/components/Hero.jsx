@@ -6,7 +6,7 @@ function Hero() {
       {/* soft glow behind the content */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-0 h-80 w-[40rem] -translate-x-1/2 rounded-full bg-glow blur-3xl"
+        className="pointer-events-none absolute left-1/2 top-0 h-80 w-160 -translate-x-1/2 rounded-full bg-glow blur-3xl"
       />
 
       <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-6 py-20 lg:grid-cols-2 lg:py-28">
