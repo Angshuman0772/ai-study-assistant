@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { ArrowRight, Bot, Send } from "lucide-react";
 
 function Hero() {
@@ -22,10 +23,13 @@ function Hero() {
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-4">
-            <button className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 font-medium text-text transition-colors duration-200 hover:bg-primary-hover">
+            <Link
+              to="/dashboard"
+              className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 font-medium text-text transition-colors duration-200 hover:bg-primary-hover"
+            >
               Get Started
               <ArrowRight size={18} />
-            </button>
+            </Link>
 
             <a
               href="#features"
