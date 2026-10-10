@@ -18,10 +18,10 @@ function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-border bg-background">
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Link to="/" className="flex items-center gap-2.5">
-          <span className="flex size-9 items-center justify-center rounded-lg bg-primary-soft text-accent">
+          <span className="flex size-9 items-center justify-center rounded-lg border border-border-strong bg-surface text-accent">
             <Brain size={20} />
           </span>
 
@@ -29,12 +29,12 @@ function Navbar() {
         </Link>
 
         <div className="flex items-center gap-6">
-          <a
-            href="#features"
+          <Link
+            to="/#features"
             className="hidden text-sm text-text-muted transition-colors hover:text-text sm:block"
           >
             Features
-          </a>
+          </Link>
 
           <Link
             to="/about"
