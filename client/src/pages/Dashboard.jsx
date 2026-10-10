@@ -16,17 +16,17 @@ function Dashboard() {
       <Navbar />
 
       {/* Hero */}
-      <section className="max-w-6xl mx-auto px-4 pt-12 pb-10">
-        <p className="text-primary font-medium mb-3">Dashboard</p>
+      <section className="mx-auto max-w-6xl px-4 pb-10 pt-14">
+        <p className="mb-4 text-sm font-semibold uppercase tracking-[0.22em] text-accent">Dashboard</p>
 
-        <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight">
+        <h1 className="text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
           Welcome back,
           <span className="block text-text">
             {user.user_metadata.full_name}
           </span>
         </h1>
 
-        <p className="mt-6 max-w-2xl text-lg text-text-subtle font-semibold">
+        <p className="mt-5 max-w-2xl text-lg leading-8 text-text-muted">
           Continue your learning journey, review flashcards, take quizzes, and
           build consistency one study session at a time.
         </p>
@@ -35,24 +35,24 @@ function Dashboard() {
       {/* Quick Stats */}
       <section className="max-w-6xl mx-auto px-4 py-6">
         <h2 className="text-2xl font-bold mb-8">Quick Stats</h2>
-        <div className="overflow-hidden rounded-3xl border border-border bg-surface shadow-glow">
+        <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-glow">
           {/* Stats Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4">
             {/* Stat 1 */}
             <div className="p-6 border-r border-b md:border-b-0 border-border">
-              <p className="text-4xl font-bold text-primary">12</p>
+              <p className="text-4xl font-bold tracking-tight text-accent">12</p>
               <p className="mt-2 text-sm text-text-subtle">Day Streak</p>
             </div>
 
             {/* Stat 2 */}
             <div className="p-6 border-b md:border-b-0 md:border-r border-border">
-              <p className="text-4xl font-bold text-primary">38h</p>
+              <p className="text-4xl font-bold tracking-tight text-accent">38h</p>
               <p className="mt-2 text-sm text-text-subtle">Hours Studied</p>
             </div>
 
             {/* Stat 3 */}
             <div className="p-6 border-r border-border">
-              <p className="text-4xl font-bold text-primary">86</p>
+              <p className="text-4xl font-bold tracking-tight text-accent">86</p>
               <p className="mt-2 text-sm text-text-subtle">
                 Flashcards Mastered
               </p>
@@ -60,7 +60,7 @@ function Dashboard() {
 
             {/* Stat 4 */}
             <div className="p-6">
-              <p className="text-4xl font-bold text-primary">24</p>
+              <p className="text-4xl font-bold tracking-tight text-accent">24</p>
               <p className="mt-2 text-sm text-text-subtle">Quizzes Completed</p>
             </div>
           </div>
@@ -72,7 +72,7 @@ function Dashboard() {
         <h2 className="text-2xl font-bold mb-6">Continue Learning</h2>
 
         <div className="grid lg:grid-cols-3 gap-6">
-          <div className="bg-surface border border-border rounded-2xl p-6 hover:border-primary transition-all cursor-pointer">
+          <div className="cursor-pointer rounded-2xl border border-border bg-surface p-6 transition-colors hover:border-border-strong hover:bg-card">
             <h3 className="text-xl font-semibold">Biology 101</h3>
 
             <p className="mt-3 text-text-subtle">Last studied 2 days ago</p>
@@ -83,7 +83,7 @@ function Dashboard() {
             </button>
           </div>
 
-          <div className="bg-surface border border-border rounded-2xl p-6 hover:border-primary transition-all cursor-pointer">
+          <div className="cursor-pointer rounded-2xl border border-border bg-surface p-6 transition-colors hover:border-border-strong hover:bg-card">
             <h3 className="text-xl font-semibold">Chemistry Basics</h3>
 
             <p className="mt-3 text-text-subtle">Last studied 5 days ago</p>
@@ -94,7 +94,7 @@ function Dashboard() {
             </button>
           </div>
 
-          <div className="bg-surface border border-border rounded-2xl p-6 hover:border-primary transition-all cursor-pointer">
+          <div className="cursor-pointer rounded-2xl border border-border bg-surface p-6 transition-colors hover:border-border-strong hover:bg-card">
             <h3 className="text-xl font-semibold">World History</h3>
 
             <p className="mt-3 text-text-subtle">Last studied 1 week ago</p>
@@ -111,7 +111,7 @@ function Dashboard() {
       <section className="max-w-6xl mx-auto px-4 py-6">
         <h2 className="text-2xl font-bold mb-6">Study Tools</h2>
         <div className="grid lg:grid-cols-4 gap-6">
-          <div className="bg-surface border border-border rounded-2xl p-6 hover:border-primary transition-all cursor-pointer">
+          <div className="cursor-pointer rounded-2xl border border-border bg-surface p-6 transition-colors hover:border-border-strong hover:bg-card">
             <Flame size={24} className="text-primary" />
             <h3 className="mt-4 text-lg font-semibold">Flashcards</h3>
             <p className="mt-2 text-text-subtle">

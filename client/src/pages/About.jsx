@@ -123,13 +123,11 @@ export default function About() {
     <div className="text-text">
       <Navbar />
       {/* HERO */}
-      <section className="relative overflow-hidden">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute left-1/2 top-0 h-80 w-160 -translate-x-1/2 rounded-full bg-glow blur-3xl"
-        />
-
-        <div className="relative mx-auto max-w-6xl px-6 py-24 lg:py-32">
+      <section className="border-b border-border">
+        <div className="mx-auto max-w-6xl px-6 py-24 lg:py-32">
+          <p className="mb-5 text-sm font-semibold uppercase tracking-[0.22em] text-accent">
+            The idea behind the app
+          </p>
           <h1 className="max-w-3xl text-5xl font-bold leading-tight tracking-tight md:text-6xl">
             About StudyFlow
           </h1>
@@ -321,18 +319,18 @@ export default function About() {
 
       {/* CTA */}
       <section className="mx-auto max-w-6xl px-6 pb-24 pt-8">
-        <div className="flex flex-col items-start justify-between gap-8 rounded-3xl bg-linear-to-r from-primary to-secondary p-10 md:flex-row md:items-center md:p-14">
+        <div className="flex flex-col items-start justify-between gap-8 rounded-2xl border border-primary/40 bg-primary-soft p-10 md:flex-row md:items-center md:p-14">
           <div className="max-w-xl">
             <h2 className="text-3xl font-bold md:text-4xl">
               Ready to Learn Smarter?
             </h2>
 
-            <p className="mt-3 text-lg text-text/80">
+            <p className="mt-3 text-lg text-text-muted">
               Start your AI-powered learning journey today.
             </p>
           </div>
 
-          <button className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-text px-8 py-4 font-semibold text-background transition-colors hover:bg-text/90">
+          <button className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-primary px-8 py-4 font-semibold text-text transition-colors hover:bg-primary-hover">
             Get Started
             <ArrowRight size={18} />
           </button>

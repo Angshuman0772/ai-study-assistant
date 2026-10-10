@@ -3,17 +3,14 @@ import { ArrowRight, Bot, Send } from "lucide-react";
 
 function Hero() {
   return (
-    <section className="relative overflow-hidden">
-      {/* soft glow behind the content */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-0 h-80 w-160 -translate-x-1/2 rounded-full bg-glow blur-3xl"
-      />
-
-      <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-6 py-20 lg:grid-cols-2 lg:py-28">
+    <section className="border-b border-border">
+      <div className="mx-auto grid max-w-6xl items-center gap-14 px-6 py-20 lg:grid-cols-[1.05fr_0.95fr] lg:py-28">
         {/* Copy */}
         <div>
-          <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
+          <p className="mb-5 text-sm font-semibold uppercase tracking-[0.22em] text-accent">
+            Your study desk, upgraded
+          </p>
+          <h1 className="max-w-xl text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl">
             Learn Smarter with AI
           </h1>
 

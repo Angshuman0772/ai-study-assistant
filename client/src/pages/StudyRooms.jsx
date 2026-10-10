@@ -76,7 +76,9 @@ function StudyRooms() {
         {/* Page heading */}
         <div className="mb-10 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="mb-3 font-medium text-primary">YOUR WORKSPACE</p>
+            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.22em] text-accent">
+              Your workspace
+            </p>
 
             <h1 className="text-4xl font-bold sm:text-5xl">Study Rooms</h1>
 
@@ -88,7 +90,7 @@ function StudyRooms() {
 
           <button
             onClick={() => setShowForm(true)}
-            className="flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 font-semibold text-white hover:bg-primary-hover"
+            className="flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 font-semibold text-text transition-colors hover:bg-primary-hover"
           >
             <Plus size={20} />
             Create Room
@@ -107,7 +109,7 @@ function StudyRooms() {
             placeholder="Search study rooms..."
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            className="w-full rounded-xl border border-border bg-card py-3 pl-11 pr-4 outline-none focus:border-primary"
+            className="w-full rounded-xl border border-border bg-surface py-3 pl-11 pr-4 outline-none transition-colors placeholder:text-text-subtle focus:border-accent"
           />
         </div>
 
@@ -119,9 +121,9 @@ function StudyRooms() {
             return (
               <div
                 key={room.id}
-                className="rounded-2xl border border-border bg-card p-6 transition hover:border-primary/60"
+                className="rounded-2xl border border-border bg-surface p-6 transition-colors hover:border-border-strong hover:bg-card"
               >
-                <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl border border-border-strong bg-primary-soft text-accent">
                   <Icon size={24} />
                 </div>
 
@@ -163,7 +165,7 @@ function StudyRooms() {
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
             <form
               onSubmit={createRoom}
-              className="w-full max-w-md rounded-2xl border border-border bg-card p-6"
+              className="w-full max-w-md rounded-2xl border border-border bg-surface p-6 shadow-glow"
             >
               <div className="mb-6 flex items-center justify-between">
                 <h2 className="text-2xl font-bold">Create Study Room</h2>
@@ -187,7 +189,7 @@ function StudyRooms() {
                 value={roomName}
                 onChange={(event) => setRoomName(event.target.value)}
                 placeholder="e.g. Operating Systems"
-                className="mb-5 w-full rounded-xl border border-border bg-background px-4 py-3 outline-none focus:border-primary"
+                className="mb-5 w-full rounded-xl border border-border bg-background px-4 py-3 outline-none focus:border-accent"
                 required
               />
 
@@ -200,12 +202,12 @@ function StudyRooms() {
                 onChange={(event) => setRoomDescription(event.target.value)}
                 placeholder="What will you study here?"
                 rows={3}
-                className="mb-6 w-full resize-none rounded-xl border border-border bg-background px-4 py-3 outline-none focus:border-primary"
+                className="mb-6 w-full resize-none rounded-xl border border-border bg-background px-4 py-3 outline-none focus:border-accent"
               />
 
               <button
                 type="submit"
-                className="w-full rounded-xl bg-primary px-4 py-3 font-semibold text-white hover:bg-primary-hover"
+                className="w-full rounded-xl bg-primary px-4 py-3 font-semibold text-text hover:bg-primary-hover"
               >
                 Create Room
               </button>

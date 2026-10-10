@@ -7,7 +7,7 @@ function FeatureCard({
 }) {
   return (
     <div
-      className={`flex flex-col rounded-2xl border border-border bg-surface p-6 ${className}`}
+      className={`flex flex-col rounded-2xl border border-border bg-surface p-6 transition-colors hover:border-border-strong hover:bg-card ${className}`}
     >
       {Icon && (
         <span className="mb-5 flex size-10 items-center justify-center rounded-lg bg-primary-soft text-accent">
