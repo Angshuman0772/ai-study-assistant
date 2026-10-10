@@ -1,7 +1,16 @@
 import Navbar from "../components/Navbar";
+import { useAuth } from "../context/AuthContext";
 import { Flame, Clock, BookOpen, Trophy, ArrowRight } from "lucide-react";
 
 function Dashboard() {
+  const { user, loading } = useAuth();
+  if (loading) {
+    return <p>Loading your dashboard...</p>;
+  }
+
+  if (!user) {
+    return <p>You are not logged in.</p>;
+  }
   return (
     <div className="min-h-screen bg-background text-text">
       <Navbar />
@@ -12,7 +21,9 @@ function Dashboard() {
 
         <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight">
           Welcome back,
-          <span className="block text-text">John</span>
+          <span className="block text-text">
+            {user.user_metadata.full_name}
+          </span>
         </h1>
 
         <p className="mt-6 max-w-2xl text-lg text-text-subtle font-semibold">

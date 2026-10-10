@@ -38,10 +38,15 @@ export function AuthProvider({ children }) {
   }, []);
 
   // Create a new account
-  function signUp(email, password) {
+  function signUp(email, password, fullName) {
     return supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: {
+          full_name: fullName,
+        },
+      },
     });
   }
 
