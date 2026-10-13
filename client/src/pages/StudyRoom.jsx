@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import NotesPanel from "../components/notes/NotesPanel";
+import FocusTimer from "../components/FocusTimer";
 import StudyRoomSkeleton from "../components/Skeletons/StudyRoomSkeleton";
 
 function StudyRoom() {
@@ -79,30 +80,36 @@ function StudyRoom() {
           </p>
         ) : room ? (
           <>
-            {/* Room heading */}
-            <div className="mb-8">
-              <div className="mb-4 flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-primary-soft text-accent">
-                  <BookOpen size={22} />
+            <div className="flex flex-col mb-8 gap-8 sm:flex-row sm:justify-between h-full">
+              {/* Room heading */}
+              <div>
+                <div className="mb-4 flex items-center gap-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-primary-soft text-accent">
+                    <BookOpen size={22} />
+                  </div>
+
+                  <div className="min-w-0 flex-1">
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-[0.18em] text-text-muted">
+                      Your workspace
+                      {room.subject && ` / ${room.subject}`}
+                    </p>
+
+                    <h1 className="text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl">
+                      {room.name}
+                    </h1>
+                  </div>
                 </div>
 
-                <div className="min-w-0 flex-1">
-                  <p className="mb-1 text-xs font-semibold uppercase tracking-[0.18em] text-text-muted">
-                    Your workspace
-                    {room.subject && ` / ${room.subject}`}
+                {room.description && (
+                  <p className="max-w-2xl text-sm/7 text-text-muted sm:text-base">
+                    {room.description}
                   </p>
-
-                  <h1 className="text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl">
-                    {room.name}
-                  </h1>
-                </div>
+                )}
               </div>
-
-              {room.description && (
-                <p className="max-w-2xl text-sm/7 text-text-muted sm:text-base">
-                  {room.description}
-                </p>
-              )}
+              {/* Timer */}
+              <div>
+                <FocusTimer />
+              </div>
             </div>
 
             {/* Three-panel workspace */}
