@@ -32,9 +32,9 @@ export default function TiptapEditor({
     }`;
 
   return (
-    <div className="max-w-5xl mx-auto overflow-hidden rounded-xl border border-border bg-white ">
+    <div className="max-w-5xl mx-auto overflow-hidden rounded-xl border border-border ">
       {/* Toolbar */}
-      <div className=" bg-card text-text flex flex-wrap items-center gap-1 border-b border-border p-2">
+      <div className=" bg-surface text-text flex flex-wrap items-center gap-1 border-b border-border p-2">
         <button
           type="button"
           className={buttonClass(editor.isActive("bold"))}

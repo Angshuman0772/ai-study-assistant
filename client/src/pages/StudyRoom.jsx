@@ -10,12 +10,16 @@ import {
   BookOpen,
 } from "lucide-react";
 import Navbar from "../components/Navbar";
+import TiptapEditor from "../components/TipTap";
 
 function StudyRoom() {
   const { id } = useParams();
   const [room, setRoom] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [noteTitle, setNoteTitle] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -156,7 +160,14 @@ function StudyRoom() {
                     </div>
                   </div>
 
-                  <button type="button" className="btn-primary-sm rounded-xl">
+                  <button
+                    type="button"
+                    className="btn-primary-sm rounded-xl"
+                    onClick={() => {
+                      setIsEditorOpen(true);
+                      setNoteTitle("");
+                    }}
+                  >
                     <Plus size={16} />
                     New
                   </button>
@@ -173,6 +184,81 @@ function StudyRoom() {
                   </p>
                 </div>
               </section>
+
+              {isEditorOpen && (
+                <div
+                  className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-3 backdrop-blur-sm sm:p-6"
+                  onClick={() => setIsEditorOpen(false)}
+                >
+                  <div
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="note-editor-title"
+                    className="flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-2xl"
+                    onClick={(event) => event.stopPropagation()}
+                  >
+                    {/* Modal header */}
+                    <div className="flex shrink-0 items-center justify-between border-b border-border px-5 py-4 sm:px-7">
+                      <div>
+                        <h2
+                          id="note-editor-title"
+                          className="text-lg font-semibold text-text"
+                        >
+                          New Note
+                        </h2>
+
+                        <p className="mt-1 text-sm text-text/60">
+                          Capture your ideas and study notes.
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        aria-label="Close editor"
+                        onClick={() => setIsEditorOpen(false)}
+                        className="flex h-9 w-9 items-center justify-center rounded-lg text-text/70 transition hover:bg-accent hover:text-text"
+                      >
+                        <span className="text-2xl leading-none">&times;</span>
+                      </button>
+                    </div>
+
+                    {/* Title */}
+                    <div className="p-4 sm:p-6">
+                      <input
+                        type="text"
+                        placeholder="Note Title"
+                        value={noteTitle}
+                        onChange={(e) => setNoteTitle(e.target.value)}
+                        className="w-full rounded-lg border border-border bg-surface px-4 py-2 text-text placeholder:text-text/60 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+
+                    {/* Editor body */}
+                    <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-6">
+                      <TiptapEditor />
+                    </div>
+
+                    {/* Modal footer */}
+                    <div className="flex shrink-0 justify-end gap-3 border-t border-border bg-card px-5 py-4 sm:px-7">
+                      <button
+                        type="button"
+                        onClick={() => setIsEditorOpen(false)}
+                        className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-text transition hover:bg-accent"
+                      >
+                        Cancel
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setIsEditorOpen(false)}
+                        className="rounded-lg bg-primary px-5 py-2 text-sm font-medium text-white transition hover:opacity-90"
+                      >
+                        Done
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* AI Assistant */}
               <section className="flex min-h-105 flex-col overflow-hidden surface-card">
