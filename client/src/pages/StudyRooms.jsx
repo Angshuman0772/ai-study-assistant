@@ -165,9 +165,14 @@ function StudyRooms() {
 
         {/* Loading state */}
         {loading ? (
-          <p className="animate-pulse surface-card py-12 text-center text-text-muted">
-            Loading your study rooms...
-          </p>
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+            <div className="animate-pulse surface-card-padded h-75">
+              <div className="h-6 w-2/3 rounded bg-card" />
+              <div className="mt-4 h-4 w-1/3 rounded bg-card" />
+              <div className="mt-6 h-4 w-full rounded bg-card" />
+              <div className="mt-2 h-4 w-4/5 rounded bg-card" />
+            </div>
+          </div>
         ) : (
           <>
             {/* Study room cards */}

@@ -1,5 +1,7 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import Placeholder from "@tiptap/extension-placeholder";
+
 import "./tiptap-editor.css";
 
 export default function TiptapEditor({
@@ -7,8 +9,11 @@ export default function TiptapEditor({
   onContentChange,
 }) {
   const editor = useEditor({
-    extensions: [StarterKit],
-    content: initialContent || "<p>Start Writing!</p>",
+    extensions: [
+      StarterKit,
+      Placeholder.configure({ placeholder: "Start writing..." }),
+    ],
+    content: initialContent,
 
     onUpdate: ({ editor }) => {
       // Get the complete formatted document as JSON.
