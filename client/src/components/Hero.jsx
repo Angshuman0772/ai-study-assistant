@@ -6,9 +6,7 @@ function Hero() {
     <section className="border-b border-border">
       <div className="mx-auto grid max-w-6xl items-center gap-14 px-6 py-20 lg:grid-cols-[1.05fr_0.95fr] lg:py-28">
         <div>
-          <p className="mb-5 text-sm font-semibold uppercase tracking-[0.22em] text-accent">
-            Your study desk, upgraded
-          </p>
+          <p className="eyebrow">Your study desk, upgraded</p>
           <h1 className="max-w-xl text-4xl/[1.08] font-bold tracking-tight sm:text-5xl lg:text-6xl">
             Learn Smarter with AI
           </h1>
@@ -19,10 +17,7 @@ function Hero() {
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-4">
-            <Link
-              to="/dashboard"
-              className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 font-medium text-text transition-colors duration-200 hover:bg-primary-hover"
-            >
+            <Link to="/dashboard" className="btn-primary">
               Get Started
               <ArrowRight size={18} />
             </Link>

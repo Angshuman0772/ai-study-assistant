@@ -232,7 +232,7 @@ function Home() {
             </p>
           </div>
 
-          <button className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-primary px-6 py-3 font-medium text-text transition-colors duration-200 hover:bg-primary-hover">
+          <button className="btn-primary">
             Get Started
             <ArrowRight size={18} />
           </button>

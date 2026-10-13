@@ -67,9 +67,7 @@ function Dashboard() {
 
       {/* Hero */}
       <section className="mx-auto max-w-6xl px-4 pb-10 pt-14">
-        <p className="mb-4 text-sm font-semibold uppercase tracking-[0.22em] text-accent">
-          Dashboard
-        </p>
+        <p className="eyebrow">Dashboard</p>
 
         <h1 className="text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
           Welcome back,
@@ -87,7 +85,7 @@ function Dashboard() {
       {/* Quick Stats */}
       <section className="max-w-6xl mx-auto px-4 py-6">
         <h2 className="text-2xl font-bold mb-8">Quick Stats</h2>
-        <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-glow">
+        <div className="overflow-hidden surface-card">
           {/* Stats Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4">
             {/* Stat 1 */}
@@ -178,7 +176,7 @@ function Dashboard() {
               <Link
                 key={room.id}
                 to={`/study-rooms/${room.id}`}
-                className="rounded-2xl border border-border bg-surface p-6 transition-colors hover:border-border-strong hover:bg-card"
+                className="surface-card-interactive"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>

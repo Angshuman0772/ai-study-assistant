@@ -123,11 +123,9 @@ export default function About() {
     <div className="text-text">
       <Navbar />
       {/* HERO */}
-      <section className="border-b border-border">
+      <section>
         <div className="mx-auto max-w-6xl px-6 py-24 lg:py-32">
-          <p className="mb-5 text-sm font-semibold uppercase tracking-[0.22em] text-accent">
-            The idea behind the app
-          </p>
+          <p className="eyebrow">The idea behind the app</p>
           <h1 className="max-w-3xl text-5xl/tight font-bold tracking-tight md:text-6xl">
             About StudyFlow
           </h1>

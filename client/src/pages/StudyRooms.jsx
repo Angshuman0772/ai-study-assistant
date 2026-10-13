@@ -109,9 +109,7 @@ function StudyRooms() {
         {/* Page heading */}
         <div className="mb-10 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.22em] text-accent">
-              Your workspace
-            </p>
+            <p className="eyebrow">Your workspace</p>
 
             <h1 className="text-4xl font-bold sm:text-5xl">Study Rooms</h1>
 
@@ -126,7 +124,7 @@ function StudyRooms() {
               setError("");
               setShowForm(true);
             }}
-            className="flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 font-semibold text-text transition-colors hover:bg-primary-hover"
+            className="btn-primary"
           >
             <Plus size={20} />
             Create Room
@@ -167,7 +165,7 @@ function StudyRooms() {
 
         {/* Loading state */}
         {loading ? (
-          <p className="py-12 text-center text-text-muted">
+          <p className="animate-pulse surface-card py-12 text-center text-text-muted">
             Loading your study rooms...
           </p>
         ) : (
@@ -178,10 +176,7 @@ function StudyRooms() {
                 const Icon = getRoomIcon(room.subject);
 
                 return (
-                  <div
-                    key={room.id}
-                    className="rounded-2xl border border-border bg-surface p-6 transition-colors hover:border-border-strong hover:bg-card"
-                  >
+                  <div key={room.id} className="surface-card-interactive">
                     <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl border border-border-strong bg-primary-soft text-accent">
                       <Icon size={24} />
                     </div>
@@ -295,7 +290,7 @@ function StudyRooms() {
               <button
                 type="submit"
                 disabled={creating}
-                className="w-full rounded-xl bg-primary px-4 py-3 font-semibold text-text hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
+                className="btn-primary w-full"
               >
                 {creating ? "Creating..." : "Create Room"}
               </button>

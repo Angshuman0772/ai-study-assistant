@@ -107,7 +107,7 @@ function StudyRoom() {
             {/* Three-panel workspace */}
             <div className="grid min-h-[calc(100vh-280px)] grid-cols-1 gap-5 lg:grid-cols-[minmax(220px,0.9fr)_minmax(350px,1.4fr)_minmax(280px,1fr)]">
               {/* Uploaded Files */}
-              <section className="flex min-h-105 flex-col rounded-2xl border border-border bg-surface p-5">
+              <section className="flex min-h-105 flex-col surface-card-padded">
                 <div className="mb-5 flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-soft text-accent">
                     <Upload size={20} />
@@ -132,7 +132,7 @@ function StudyRoom() {
 
                   <button
                     type="button"
-                    className="mt-5 flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-text transition-colors hover:bg-primary-hover"
+                    className="mt-5 btn-primary-sm rounded-xl"
                   >
                     <Plus size={16} />
                     Upload file
@@ -141,7 +141,7 @@ function StudyRoom() {
               </section>
 
               {/* My Notes */}
-              <section className="flex min-h-105 flex-col rounded-2xl border border-border bg-surface p-5">
+              <section className="flex min-h-105 flex-col surface-card-padded">
                 <div className="mb-5 flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-soft text-accent">
@@ -156,10 +156,7 @@ function StudyRoom() {
                     </div>
                   </div>
 
-                  <button
-                    type="button"
-                    className="flex items-center gap-2 rounded-xl bg-primary px-3 py-2.5 text-sm font-semibold text-text transition-colors hover:bg-primary-hover"
-                  >
+                  <button type="button" className="btn-primary-sm rounded-xl">
                     <Plus size={16} />
                     New
                   </button>
@@ -178,7 +175,7 @@ function StudyRoom() {
               </section>
 
               {/* AI Assistant */}
-              <section className="flex min-h-105 flex-col overflow-hidden rounded-2xl border border-border bg-surface">
+              <section className="flex min-h-105 flex-col overflow-hidden surface-card">
                 <div className="flex items-center gap-3 border-b border-border p-5">
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-soft text-accent">
                     <BrainCircuit size={20} />
