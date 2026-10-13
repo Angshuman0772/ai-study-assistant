@@ -9,7 +9,7 @@ function Hero() {
           <p className="mb-5 text-sm font-semibold uppercase tracking-[0.22em] text-accent">
             Your study desk, upgraded
           </p>
-          <h1 className="max-w-xl text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl">
+          <h1 className="max-w-xl text-4xl/[1.08] font-bold tracking-tight sm:text-5xl lg:text-6xl">
             Learn Smarter with AI
           </h1>
 

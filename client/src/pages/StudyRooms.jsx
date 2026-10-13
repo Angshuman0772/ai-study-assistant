@@ -192,7 +192,7 @@ function StudyRooms() {
 
                     <h2 className="text-xl font-semibold">{room.name}</h2>
 
-                    <p className="mt-3 min-h-12 text-sm leading-6 text-text-muted">
+                    <p className="mt-3 min-h-12 text-sm/6 text-text-muted">
                       {room.description || "Your personal study space."}
                     </p>
 

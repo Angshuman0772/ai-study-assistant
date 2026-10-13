@@ -5,6 +5,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import StudyRooms from "./pages/StudyRooms";
+import StudyRoom from "./pages/StudyRoom";
 import Flashcards from "./pages/Flashcards";
 import Quizzes from "./pages/Quizzes";
 import Profile from "./pages/Profile";
@@ -21,6 +22,7 @@ function App() {
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/study-rooms" element={<StudyRooms />} />
+        <Route path="/study-rooms/:id" element={<StudyRoom />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/flashcards" element={<Flashcards />} />
         <Route path="/quizzes" element={<Quizzes />} />

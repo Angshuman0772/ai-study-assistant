@@ -78,7 +78,7 @@ function Dashboard() {
           </span>
         </h1>
 
-        <p className="mt-5 max-w-2xl text-lg leading-8 text-text-muted">
+        <p className="mt-5 max-w-2xl text-lg/8 text-text-muted">
           Continue your learning journey, review flashcards, take quizzes, and
           build consistency one study session at a time.
         </p>

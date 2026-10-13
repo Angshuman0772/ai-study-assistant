@@ -57,3 +57,22 @@ export async function getStudyRooms() {
 
   return data;
 }
+
+// Fetching a room
+export async function getStudyRoom(roomId) {
+  if (!roomId) {
+    throw new Error("A study room ID is required.");
+  }
+
+  const { data, error } = await supabase
+    .from("study_rooms")
+    .select("id, name, description, subject, created_at")
+    .eq("id", roomId)
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}

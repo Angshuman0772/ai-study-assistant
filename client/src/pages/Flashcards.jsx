@@ -10,7 +10,7 @@ function Flashcards() {
           Active recall
         </p>
         <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Flashcards</h1>
-        <p className="mt-4 max-w-xl text-lg leading-8 text-text-muted">
+        <p className="mt-4 max-w-xl text-lg/8 text-text-muted">
           Review key ideas in short, focused rounds that fit your study rhythm.
         </p>
         <div className="mt-12 max-w-2xl rounded-2xl border border-border bg-surface p-6">

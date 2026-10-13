@@ -128,7 +128,7 @@ export default function About() {
           <p className="mb-5 text-sm font-semibold uppercase tracking-[0.22em] text-accent">
             The idea behind the app
           </p>
-          <h1 className="max-w-3xl text-5xl font-bold leading-tight tracking-tight md:text-6xl">
+          <h1 className="max-w-3xl text-5xl/tight font-bold tracking-tight md:text-6xl">
             About StudyFlow
           </h1>
 
@@ -146,14 +146,14 @@ export default function About() {
           <div>
             <h2 className="mb-6 text-3xl font-bold sm:text-4xl">Our Mission</h2>
 
-            <p className="text-lg leading-relaxed text-text-muted">
+            <p className="text-lg/relaxed text-text-muted">
               Modern students often switch between notes, videos, search
               engines, flashcards, and multiple productivity apps. StudyFlow
               aims to bring these tools together into a single intelligent
               learning environment powered by AI.
             </p>
 
-            <p className="mt-6 text-lg leading-relaxed text-text-muted">
+            <p className="mt-6 text-lg/relaxed text-text-muted">
               The goal is simple: make studying more effective, engaging, and
               personalized for every learner.
             </p>
@@ -287,7 +287,7 @@ export default function About() {
             Why I Built StudyFlow
           </h2>
 
-          <p className="border-l-2 border-primary pl-6 text-xl leading-relaxed text-text-muted lg:col-span-2">
+          <p className="border-l-2 border-primary pl-6 text-xl/relaxed text-text-muted lg:col-span-2">
             As a Computer Science student, I wanted to explore how artificial
             intelligence can improve learning experiences. StudyFlow combines
             modern web development, AI integration, and educational tools into a

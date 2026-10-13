@@ -80,7 +80,7 @@ export default function Auth() {
           </Link>
 
           <div className="max-w-md">
-            <h1 className="text-4xl font-semibold leading-[1.15] tracking-tight">
+            <h1 className="text-4xl/[1.15] font-semibold tracking-tight">
               A quieter place to study.
             </h1>
 
@@ -88,7 +88,7 @@ export default function Auth() {
               {points.map(([term, description]) => (
                 <div key={term} className="flex gap-6 py-4">
                   <dt className="w-20 shrink-0 text-sm font-medium">{term}</dt>
-                  <dd className="text-sm leading-6 text-text-muted">
+                  <dd className="text-sm/6 text-text-muted">
                     {description}
                   </dd>
                 </div>
@@ -197,7 +197,7 @@ export default function Auth() {
                 <p
                   role="status"
                   aria-live="polite"
-                  className={`text-sm leading-5 ${
+                  className={`text-sm/5 ${
                     isError ? "text-red-400" : "text-text-muted"
                   }`}
                 >
