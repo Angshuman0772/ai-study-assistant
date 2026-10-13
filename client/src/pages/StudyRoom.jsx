@@ -71,9 +71,7 @@ function StudyRoom() {
 
       <main className="mx-auto w-full px-4 py-8 lg:px-8">
         {loading ? (
-          <p className="mb-3 text-sm font-semibold uppercase tracking-[0.22em] text-accent">
-            <StudyRoomSkeleton />
-          </p>
+          <StudyRoomSkeleton />
         ) : error ? (
           <p role="alert" className="text-red-500">
             {error}
