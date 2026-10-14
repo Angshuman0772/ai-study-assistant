@@ -10,7 +10,7 @@ import {
 } from "../../services/noteService";
 import NoteCard from "./NoteCard";
 import NoteEditorModal from "./NoteEditorModal";
-import NoteCardSkeleton from "/NoteCardSkeleton";
+import NoteCardSkeleton from "../Skeletons/NoteCardSkeleton";
 import { EMPTY_DOC } from "./noteUtils";
 
 function NotesPanel({ roomId }) {

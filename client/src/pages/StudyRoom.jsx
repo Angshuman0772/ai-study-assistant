@@ -1,16 +1,11 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { getStudyRoom } from "../services/studyRoomService";
-import {
-  BrainCircuit,
-  MessageCircle,
-  Plus,
-  Upload,
-  BookOpen,
-} from "lucide-react";
+import { Plus, Upload, BookOpen } from "lucide-react";
 import Navbar from "../components/Navbar";
 import NotesPanel from "../components/notes/NotesPanel";
 import FocusTimer from "../components/FocusTimer";
+import AIChat from "../components/AIChat";
 import StudyRoomSkeleton from "../components/Skeletons/StudyRoomSkeleton";
 
 function StudyRoom() {
@@ -150,43 +145,7 @@ function StudyRoom() {
               <NotesPanel roomId={room.id} />
 
               {/* AI Assistant */}
-              <section className="flex min-h-105 flex-col overflow-hidden surface-card">
-                <div className="flex items-center gap-3 border-b border-border p-5">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-soft text-accent">
-                    <BrainCircuit size={20} />
-                  </div>
-
-                  <div>
-                    <h2 className="font-semibold">AI Assistant</h2>
-                    <p className="text-sm text-text-muted">
-                      Your personal AI tutor
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex flex-1 flex-col items-center justify-center p-6 text-center">
-                  <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-soft text-accent">
-                    <MessageCircle size={26} />
-                  </div>
-
-                  <p className="font-medium">What are you learning today?</p>
-
-                  <p className="mt-2 text-sm/6 text-text-muted">
-                    Ask questions, clarify difficult concepts, and get help with
-                    your study materials.
-                  </p>
-                </div>
-
-                <div className="border-t border-border p-4">
-                  <button
-                    type="button"
-                    className="flex w-full items-center justify-between rounded-xl border border-border bg-background px-4 py-3 text-left text-sm text-text-muted transition-colors hover:border-accent"
-                  >
-                    Ask your AI tutor...
-                    <MessageCircle size={17} />
-                  </button>
-                </div>
-              </section>
+              <AIChat />
             </div>
           </>
         ) : (
