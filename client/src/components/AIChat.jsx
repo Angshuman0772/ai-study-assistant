@@ -22,40 +22,57 @@ export default function AIAssistant() {
     });
   }, [messages, loading]);
 
-  function handleSend(e) {
-    e.preventDefault();
+  const handleSend = async () => {
+    const userMessage = input.trim();
 
-    const content = input.trim();
+    if (!userMessage || loading) return;
 
-    if (!content || loading) return;
-
+    // Add the user's message to the UI immediately
     setMessages((prev) => [
       ...prev,
-      {
-        id: crypto.randomUUID(),
-        role: "user",
-        content,
-      },
+      { id: crypto.randomUUID(), role: "user", content: userMessage },
     ]);
 
     setInput("");
     setLoading(true);
 
-    // Temporary placeholder until the AI backend is connected.
-    setTimeout(() => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/chat`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: userMessage,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to get an AI response.");
+      }
+
+      // Add Gemini's response to the conversation
+      setMessages((prev) => [
+        ...prev,
+        { id: crypto.randomUUID(), role: "assistant", content: data.reply },
+      ]);
+    } catch (error) {
+      console.error("Chat request failed:", error);
+
       setMessages((prev) => [
         ...prev,
         {
           id: crypto.randomUUID(),
           role: "assistant",
-          content:
-            "I'm ready to help you study! We'll connect real AI responses next.",
+          content: error.message || "Something went wrong. Please try again.",
         },
       ]);
-
+    } finally {
       setLoading(false);
-    }, 600);
-  }
+    }
+  };
 
   function handleNewChat() {
     setMessages([]);
