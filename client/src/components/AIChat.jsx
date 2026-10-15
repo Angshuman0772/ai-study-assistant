@@ -8,7 +8,7 @@ import {
   Plus,
 } from "lucide-react";
 
-export default function AIAssistant() {
+export default function AIassistant() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -27,6 +27,12 @@ export default function AIAssistant() {
 
     if (!userMessage || loading) return;
 
+    // Capture earlier messages before adding the new user message.
+    const history = messages.map(({ role, content }) => ({
+      role,
+      content,
+    }));
+
     // Add the user's message to the UI immediately
     setMessages((prev) => [
       ...prev,
@@ -44,6 +50,7 @@ export default function AIAssistant() {
         },
         body: JSON.stringify({
           message: userMessage,
+          history,
         }),
       });
 
@@ -98,7 +105,7 @@ export default function AIAssistant() {
           </div>
 
           <div>
-            <h2 className="font-semibold">AI Assistant</h2>
+            <h2 className="font-semibold">AI assistant</h2>
             <p className="text-sm text-text-muted">Your personal AI tutor</p>
           </div>
         </div>

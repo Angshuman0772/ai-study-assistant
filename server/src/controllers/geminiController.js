@@ -2,9 +2,8 @@ import ai from "../config/gemini.js";
 
 export const chatWithGemini = async (req, res) => {
   try {
-    const { message } = req.body;
+    const { message, history = [] } = req.body;
 
-    // Validate the incoming request
     if (typeof message !== "string" || !message.trim()) {
       return res.status(400).json({
         error: "Please provide a valid message.",
@@ -17,35 +16,54 @@ export const chatWithGemini = async (req, res) => {
       });
     }
 
-    // Send the user's question to Gemini
-    const response = await ai.models.generateContent({
-      model: process.env.GEMINI_MODEL || "gemini-3.8-flash",
-      contents: message.trim(),
+    if (!Array.isArray(history) || history.length > 40) {
+      return res.status(400).json({
+        error: "Invalid conversation history.",
+      });
+    }
+
+    console.log("Received history:", JSON.stringify(history, null, 2));
+    // Convert frontend message roles to Gemini roles.
+    const geminiHistory = history.map((item) => {
+      if (
+        !["user", "assistant"].includes(item.role) ||
+        typeof item.content !== "string"
+      ) {
+        throw new Error("Invalid history message.");
+      }
+
+      return {
+        role: item.role === "assistant" ? "model" : "user",
+        parts: [{ text: item.content }],
+      };
+    });
+
+    const chat = ai.chats.create({
+      model: process.env.GEMINI_MODEL,
+      history: geminiHistory,
       config: {
         systemInstruction: `
-          You are the AI Study Assistant, an educational assistant
-          designed to help students learn effectively.
-
-          Explain difficult concepts clearly and step by step.
-          Use examples when they help understanding.
-          Help students reason through problems instead of
-          simply giving answers when teaching would be more useful.
-          Use headings and lists when appropriate.
-          If a question is ambiguous, ask for clarification.
+          You are an AI Study Assistant.
+          Explain concepts clearly and step by step.
+          Use examples when helpful.
+          Help students understand the reasoning behind answers.
         `,
       },
     });
 
-    const reply = response.text;
+    const response = await chat.sendMessage({
+      message: message.trim(),
+    });
 
-    if (!reply) {
+    if (!response.text) {
       return res.status(502).json({
-        error: "Gemini returned an empty response. Please try again.",
+        error: "Gemini returned an empty response.",
       });
     }
 
-    // Send the response back to React
-    return res.status(200).json({ reply });
+    return res.status(200).json({
+      reply: response.text,
+    });
   } catch (error) {
     console.error("Gemini API error:", error);
 
