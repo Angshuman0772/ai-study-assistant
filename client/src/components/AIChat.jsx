@@ -1,4 +1,11 @@
 import { useState, useRef, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import {
+  createConversation,
+  getConversations,
+  saveMessage,
+  getConversationMessages,
+} from "../services/conversationService";
 import {
   BrainCircuit,
   MessageCircle,
@@ -13,6 +20,11 @@ export default function AIassistant() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const { id: roomId } = useParams();
+
+  const [conversationId, setConversationId] = useState(null);
+  const [loadingHistory, setLoadingHistory] = useState(true);
+
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -22,27 +34,112 @@ export default function AIassistant() {
     });
   }, [messages, loading]);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadLatestConversation() {
+      if (!roomId) {
+        setLoadingHistory(false);
+        return;
+      }
+
+      setLoadingHistory(true);
+
+      try {
+        const conversations = await getConversations(roomId);
+
+        if (cancelled) return;
+
+        // No previous conversations: start with an empty chat.
+        if (conversations.length === 0) {
+          setConversationId(null);
+          setMessages([]);
+          return;
+        }
+
+        // getConversations orders by updated_at descending.
+        const latestConversation = conversations[0];
+
+        const savedMessages = await getConversationMessages(
+          latestConversation.id,
+        );
+
+        if (cancelled) return;
+
+        setConversationId(latestConversation.id);
+
+        setMessages(
+          savedMessages.map((message) => ({
+            id: message.id,
+            role: message.role,
+            content: message.content,
+          })),
+        );
+      } catch (error) {
+        console.error("Failed to load conversation:", error);
+      } finally {
+        if (!cancelled) {
+          setLoadingHistory(false);
+        }
+      }
+    }
+
+    loadLatestConversation();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [roomId]);
+
   const handleSend = async () => {
     const userMessage = input.trim();
 
-    if (!userMessage || loading) return;
+    if (!userMessage || loading || loadingHistory) return;
 
-    // Capture earlier messages before adding the new user message.
+    if (!roomId) {
+      console.error("Cannot send a message without a study room ID.");
+      return;
+    }
+
+    // Capture previous messages for Gemini's conversation history.
     const history = messages.map(({ role, content }) => ({
       role,
       content,
     }));
 
-    // Add the user's message to the UI immediately
-    setMessages((prev) => [
-      ...prev,
-      { id: crypto.randomUUID(), role: "user", content: userMessage },
-    ]);
+    // Optimistically show the user's message.
+    const userChatMessage = {
+      id: crypto.randomUUID(),
+      role: "user",
+      content: userMessage,
+    };
 
+    setMessages((prev) => [...prev, userChatMessage]);
     setInput("");
     setLoading(true);
 
     try {
+      // Create a database conversation only when needed.
+      let activeConversationId = conversationId;
+
+      if (!activeConversationId) {
+        const conversation = await createConversation({
+          roomId,
+          title: userMessage.slice(0, 60),
+        });
+
+        activeConversationId = conversation.id;
+        setConversationId(activeConversationId);
+      }
+
+      // Persist the user's message.
+      await saveMessage({
+        conversationId: activeConversationId,
+        role: "user",
+        content: userMessage,
+      });
+
+      // Ask Gemini for a response.
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/chat`, {
         method: "POST",
         headers: {
@@ -60,19 +157,31 @@ export default function AIassistant() {
         throw new Error(data.error || "Failed to get an AI response.");
       }
 
-      // Add Gemini's response to the conversation
+      // Persist Gemini's reply.
+      const savedReply = await saveMessage({
+        conversationId: activeConversationId,
+        role: "model",
+        content: data.reply,
+      });
+
+      // Add the persisted reply to React state.
       setMessages((prev) => [
         ...prev,
-        { id: crypto.randomUUID(), role: "assistant", content: data.reply },
+        {
+          id: savedReply.id,
+          role: savedReply.role,
+          content: savedReply.content,
+        },
       ]);
     } catch (error) {
       console.error("Chat request failed:", error);
 
+      // Keep every rendered message's key unique.
       setMessages((prev) => [
         ...prev,
         {
           id: crypto.randomUUID(),
-          role: "assistant",
+          role: "model",
           content: error.message || "Something went wrong. Please try again.",
         },
       ]);
@@ -82,9 +191,11 @@ export default function AIassistant() {
   };
 
   function handleNewChat() {
+    if (loading) return;
+
     setMessages([]);
     setInput("");
-    setLoading(false);
+    setConversationId(null);
     inputRef.current?.focus();
   }
 
