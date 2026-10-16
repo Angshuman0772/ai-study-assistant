@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Timer, Play, Pause, RotateCcw, Save } from "lucide-react";
+import { Play, Pause, RotateCcw, Save } from "lucide-react";
 import { saveFocusSession } from "../services/focusTimerService";
 
 const FOCUS_SECONDS = 25 * 60;
@@ -91,92 +91,81 @@ export default function FocusTimer() {
     return `${String(minutes).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
   };
 
+  const status = sessionSaved
+    ? { text: "Saved", className: "text-green-600 dark:text-green-400" }
+    : sessionError
+      ? { text: sessionError, className: "text-red-500" }
+      : remaining === 0
+        ? { text: "Session complete", className: "text-accent" }
+        : null;
+
+  const iconBtn =
+    "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-colors disabled:opacity-50";
+
   return (
-    <section className="flex w-full flex-col gap-4 rounded-2xl border border-border bg-surface p-4 sm:flex-row sm:items-center sm:justify-between">
-      {/* Timer label */}
-      <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-accent">
-          <Timer size={20} />
-        </div>
+    <section
+      aria-label="Focus timer"
+      className="flex shrink-0 items-center gap-2"
+    >
+      {status && (
+        <span
+          role="status"
+          className={`hidden text-xs font-medium md:inline ${status.className}`}
+        >
+          {status.text}
+        </span>
+      )}
 
-        <div className="w-56 shrink-0">
-          <h2 className="font-semibold">Focus Timer</h2>
-          <p className="text-xs text-text-muted">
-            {sessionSaved ? (
-              <span className="font-medium text-green-600 dark:text-green-400">
-                Session saved successfully!
-              </span>
-            ) : sessionError ? (
-              <span className="font-medium text-red-500">{sessionError}</span>
-            ) : remaining === 0 ? (
-              <span className="font-medium text-accent">
-                Focus session complete!
-              </span>
-            ) : running ? (
-              "Session is in progress"
-            ) : (
-              "25-minute focus session"
-            )}
-          </p>
-        </div>
-      </div>
+      <p className="w-16 text-center text-xl font-semibold tabular-nums">
+        {formatTime(remaining)}
+      </p>
 
-      {/* Countdown */}
-      <div className="shrink-0 text-left sm:w-24 sm:text-center">
-        <p className="text-3xl font-bold tracking-tight tabular-nums">
-          {formatTime(remaining)}
-        </p>
-      </div>
-
-      {/* Controls */}
-      {/* Adjusted min-w slightly to accommodate the new button cleanly */}
-      <div className="flex min-w-50 shrink-0 items-center justify-end gap-2">
-        {remaining === 0 && !sessionSaved ? (
-          <button
-            type="button"
-            onClick={handleSaveSession}
-            disabled={isSaving}
-            className="flex w-24 items-center justify-center gap-1.5 rounded-xl bg-accent px-2 py-2.5 text-sm font-semibold text-white hover:bg-accent/90 disabled:opacity-50"
-          >
-            <Save size={16} />
-            {isSaving ? "Saving..." : "Save"}
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={toggleTimer}
-            disabled={remaining === 0}
-            className="flex w-24 items-center justify-center gap-2 rounded-xl bg-primary py-2.5 text-sm font-semibold text-text hover:bg-primary-hover disabled:opacity-50"
-          >
-            {running ? <Pause size={16} /> : <Play size={16} />}
-            {running ? "Pause" : "Start"}
-          </button>
-        )}
-
-        {/* New early save button: only shows if the timer has been started and isn't finished */}
-        {startedAt && remaining > 0 && (
-          <button
-            type="button"
-            onClick={handleSaveAndReset}
-            disabled={isSaving}
-            title="Save session and reset"
-            aria-label="Save session and reset"
-            className="shrink-0 rounded-xl border border-border p-2.5 text-text-muted hover:bg-green-500/10 hover:text-green-600 disabled:opacity-50 dark:hover:text-green-400"
-          >
-            <Save size={16} />
-          </button>
-        )}
-
+      {remaining === 0 && !sessionSaved ? (
         <button
           type="button"
-          onClick={resetTimer}
-          title="Reset timer"
-          aria-label="Reset timer"
-          className="shrink-0 rounded-xl border border-border p-2.5 text-text-muted hover:bg-background hover:text-text"
+          onClick={handleSaveSession}
+          disabled={isSaving}
+          title={isSaving ? "Saving..." : "Save session"}
+          aria-label="Save session"
+          className={`${iconBtn} bg-accent text-white hover:bg-accent/90`}
         >
-          <RotateCcw size={16} />
+          <Save size={16} />
         </button>
-      </div>
+      ) : (
+        <button
+          type="button"
+          onClick={toggleTimer}
+          disabled={remaining === 0}
+          title={running ? "Pause" : "Start"}
+          aria-label={running ? "Pause timer" : "Start timer"}
+          className={`${iconBtn} bg-primary text-text hover:bg-primary-hover`}
+        >
+          {running ? <Pause size={16} /> : <Play size={16} />}
+        </button>
+      )}
+
+      {startedAt && remaining > 0 && (
+        <button
+          type="button"
+          onClick={handleSaveAndReset}
+          disabled={isSaving}
+          title="Save session and reset"
+          aria-label="Save session and reset"
+          className={`${iconBtn} text-text-muted hover:bg-green-500/10 hover:text-green-600 dark:hover:text-green-400`}
+        >
+          <Save size={16} />
+        </button>
+      )}
+
+      <button
+        type="button"
+        onClick={resetTimer}
+        title="Reset timer"
+        aria-label="Reset timer"
+        className={`${iconBtn} text-text-muted hover:bg-background hover:text-text`}
+      >
+        <RotateCcw size={16} />
+      </button>
     </section>
   );
 }

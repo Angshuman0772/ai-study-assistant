@@ -207,7 +207,7 @@ export default function AIassistant() {
   }
 
   return (
-    <section className="flex min-h-105 flex-col overflow-hidden surface-card">
+    <section className="flex min-h-105 flex-col overflow-hidden surface-card lg:min-h-0">
       {/* Header — unchanged layout */}
       <div className="flex items-center justify-between gap-3  p-5">
         <div className="flex items-center gap-3">
@@ -235,8 +235,8 @@ export default function AIassistant() {
       </div>
 
       {/* Conversation area */}
-      <div className="flex flex-1 flex-col px-5 py-1">
-        <div className="flex flex-1 flex-col gap-4 overflow-y-auto border rounded-xl border-dashed border-border">
+      <div className="flex min-h-0 flex-1 flex-col px-5 py-1">
+        <div className="scroll-styled flex flex-1 flex-col gap-4 overflow-y-auto ">
           {messages.length === 0 ? (
             /* Original welcome screen */
             <div className="flex flex-1 flex-col items-center justify-center p-2 text-center">
