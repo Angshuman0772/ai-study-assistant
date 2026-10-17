@@ -98,3 +98,89 @@
     outline-offset: 2px;
   }
 }
+
+/* Markdown styling for Gemini responses */
+.chat-markdown > :first-child {
+  margin-top: 0;
+}
+
+.chat-markdown > :last-child {
+  margin-bottom: 0;
+}
+
+.chat-markdown p {
+  margin: 0.5rem 0;
+}
+
+.chat-markdown h1,
+.chat-markdown h2,
+.chat-markdown h3 {
+  margin: 1rem 0 0.5rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.chat-markdown h1 {
+  font-size: 1.3rem;
+}
+
+.chat-markdown h2 {
+  font-size: 1.15rem;
+}
+
+.chat-markdown h3 {
+  font-size: 1rem;
+}
+
+.chat-markdown ul,
+.chat-markdown ol {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.chat-markdown ul {
+  list-style: disc;
+}
+
+.chat-markdown ol {
+  list-style: decimal;
+}
+
+.chat-markdown li {
+  margin: 0.25rem 0;
+}
+
+.chat-markdown pre {
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 0.75rem 0;
+  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  background: var(--color-surface);
+}
+
+.chat-markdown :not(pre) > code {
+  padding: 0.15rem 0.3rem;
+  border-radius: 0.25rem;
+  background: var(--color-surface);
+  font-size: 0.9em;
+}
+
+.chat-markdown pre code {
+  white-space: pre;
+}
+
+.chat-markdown table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+}
+
+.chat-markdown th,
+.chat-markdown td {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--color-border);
+  text-align: left;
+}

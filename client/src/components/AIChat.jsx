@@ -14,6 +14,8 @@ import {
   User,
   Plus,
 } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 export default function AIassistant() {
   const [messages, setMessages] = useState([]);
@@ -252,38 +254,42 @@ export default function AIassistant() {
               </p>
             </div>
           ) : (
-            messages.map((message) => {
-              const isUser = message.role === "user";
+            <>
+              {messages.map((message) => {
+                const isUser = message.role === "user";
 
-              return (
-                <div
-                  key={message.id}
-                  className={`flex items-start gap-3 ${
-                    isUser ? "flex-row-reverse" : ""
-                  }`}
-                >
+                return (
                   <div
-                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
-                      isUser
-                        ? "bg-primary-soft text-accent"
-                        : "bg-primary-soft text-accent"
+                    key={message.id}
+                    className={`flex items-start gap-3 ${
+                      isUser ? "flex-row-reverse" : ""
                     }`}
                   >
-                    {isUser ? <User size={16} /> : <Bot size={17} />}
-                  </div>
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-accent">
+                      {isUser ? <User size={16} /> : <Bot size={17} />}
+                    </div>
 
-                  <div
-                    className={`max-w-[85%] whitespace-pre-wrap wrap-break-word rounded-2xl px-4 py-3 text-sm/6 ${
-                      isUser
-                        ? "rounded-tr-sm bg-primary text-white"
-                        : "rounded-tl-sm bg-background text-text"
-                    }`}
-                  >
-                    {message.content}
+                    <div
+                      className={`min-w-0 max-w-[85%] wrap-break-word rounded-2xl px-4 py-3 text-sm/6 ${
+                        isUser
+                          ? "rounded-tr-sm bg-primary text-white whitespace-pre-wrap"
+                          : "rounded-tl-sm bg-background text-text"
+                      }`}
+                    >
+                      {isUser ? (
+                        message.content
+                      ) : (
+                        <div className="chat-markdown min-w-0">
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                            {message.content}
+                          </ReactMarkdown>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              );
-            })
+                );
+              })}
+            </>
           )}
 
           {loading && (
