@@ -1,7 +1,7 @@
 // This component is responsible for rendering a single note card in the notes list.
 
 import { Pencil, Trash2 } from "lucide-react";
-import { getPreview } from "./noteUtils";
+import NoteContentPreview from "./NoteContentPreview";
 
 function NoteCard({ note, onEdit, onDelete }) {
   return (
@@ -14,9 +14,7 @@ function NoteCard({ note, onEdit, onDelete }) {
         <h3 className="truncate font-medium">
           {note.title || "Untitled note"}
         </h3>
-        <p className="mt-1 line-clamp-2 text-sm text-text-muted">
-          {getPreview(note.content) || "No content"}
-        </p>
+        <NoteContentPreview content={note.content} />
       </button>
 
       <div className="mt-3 flex justify-end gap-2">

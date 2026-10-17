@@ -122,3 +122,44 @@
   height: 0;
   pointer-events: none;
 }
+
+/* Compact, read-only note previews */
+.note-content-preview .tiptap {
+  min-height: 0;
+  padding: 0;
+  background: transparent;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--color-text);
+  overflow: hidden;
+}
+
+.note-content-preview .tiptap h1 {
+  font-size: 1.125rem;
+  margin: 0.5rem 0;
+}
+
+.note-content-preview .tiptap h2 {
+  font-size: 1rem;
+  margin: 0.5rem 0;
+}
+
+.note-content-preview .tiptap h3 {
+  font-size: 0.9375rem;
+  margin: 0.5rem 0;
+}
+
+.note-content-preview .tiptap p {
+  margin-bottom: 0.5rem;
+}
+
+.note-content-preview .tiptap ul,
+.note-content-preview .tiptap ol {
+  margin: 0.5rem 0;
+  padding-left: 1.25rem;
+}
+
+.note-content-preview .tiptap pre {
+  overflow-x: auto;
+  white-space: pre;
+}
