@@ -13,6 +13,7 @@ import {
   Bot,
   User,
   Plus,
+  History,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -26,6 +27,8 @@ export default function AIassistant() {
 
   const [conversationId, setConversationId] = useState(null);
   const [loadingHistory, setLoadingHistory] = useState(true);
+
+  const [conversations, setConversations] = useState([]);
 
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
@@ -91,6 +94,25 @@ export default function AIassistant() {
     return () => {
       cancelled = true;
     };
+  }, [roomId]);
+
+  useEffect(() => {
+    async function loadConversations() {
+      if (!roomId) return;
+
+      try {
+        setLoadingHistory(true);
+
+        const data = await getConversations(roomId);
+        setConversations(data ?? []);
+      } catch (error) {
+        console.error("Failed to load conversations:", error);
+      } finally {
+        setLoadingHistory(false);
+      }
+    }
+
+    loadConversations();
   }, [roomId]);
 
   const handleSend = async () => {
@@ -208,22 +230,95 @@ export default function AIassistant() {
     }
   }
 
+  async function openConversation(conversation) {
+    try {
+      setLoadingHistory(true);
+
+      const data = await getConversationMessages(conversation.id);
+
+      setConversationId(conversation.id);
+      setMessages(data ?? []);
+    } catch (error) {
+      console.error("Failed to load conversation:", error);
+    } finally {
+      setLoadingHistory(false);
+    }
+  }
+
   return (
     <section className="flex min-h-105 flex-col overflow-hidden surface-card lg:min-h-0">
-      {/* Header — unchanged layout */}
-      <div className="flex items-center justify-between gap-3  p-5">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-soft text-accent">
+      {/* Header */}
+      <div className="flex items-center justify-between gap-3 p-4">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-accent">
             <BrainCircuit size={20} />
           </div>
 
-          <div>
+          <div className="min-w-0">
             <h2 className="font-semibold">AI assistant</h2>
             <p className="text-sm text-text-muted">Your personal AI tutor</p>
           </div>
         </div>
 
-        {messages.length > 0 && (
+        <div className="flex shrink-0 items-center gap-1">
+          {/* Conversation history dropdown */}
+          <div className="relative">
+            <details className="group">
+              <summary
+                className="flex cursor-pointer list-none items-center gap-2 rounded-lg px-2 py-2 text-sm text-text-muted transition-colors hover:bg-background hover:text-text"
+                title="View previous conversations"
+              >
+                <History size={17} />
+                <span className="hidden sm:inline">History</span>
+              </summary>
+
+              <div className="absolute right-0 top-full z-50 mt-2 w-64 overflow-hidden rounded-xl border border-border bg-background shadow-xl sm:w-72">
+                <div className="flex items-center justify-between border-b border-border px-3 py-3">
+                  <p className="text-sm font-semibold">Previous chats</p>
+                  <span className="text-xs text-text-muted">
+                    {conversations.length}
+                  </span>
+                </div>
+
+                <div className="scroll-styled max-h-64 overflow-y-auto p-2">
+                  {loadingHistory ? (
+                    <p className="px-2 py-4 text-center text-sm text-text-muted">
+                      Loading conversations...
+                    </p>
+                  ) : conversations.length === 0 ? (
+                    <p className="px-2 py-4 text-center text-sm text-text-muted">
+                      No previous conversations
+                    </p>
+                  ) : (
+                    conversations.map((conversation) => (
+                      <button
+                        key={conversation.id}
+                        type="button"
+                        onClick={(e) => {
+                          e.currentTarget
+                            .closest("details")
+                            ?.removeAttribute("open");
+
+                          openConversation(conversation);
+                        }}
+                        className={`mb-1 flex w-full items-start gap-2 rounded-lg px-3 py-2.5 text-left text-sm transition-colors ${
+                          conversationId === conversation.id
+                            ? "bg-primary-soft text-accent"
+                            : "text-text hover:bg-surface"
+                        }`}
+                      >
+                        <MessageCircle size={16} className="mt-0.5 shrink-0" />
+                        <span className="min-w-0 flex-1 truncate">
+                          {conversation.title || "Untitled conversation"}
+                        </span>
+                      </button>
+                    ))
+                  )}
+                </div>
+              </div>
+            </details>
+          </div>
+
           <button
             type="button"
             onClick={handleNewChat}
@@ -233,14 +328,13 @@ export default function AIassistant() {
             <Plus size={17} />
             <span className="hidden sm:inline">New chat</span>
           </button>
-        )}
+        </div>
       </div>
 
       {/* Conversation area */}
       <div className="flex min-h-0 flex-1 flex-col px-5 py-1">
-        <div className="scroll-styled flex flex-1 flex-col gap-4 overflow-y-auto ">
+        <div className="scroll-styled flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto">
           {messages.length === 0 ? (
-            /* Original welcome screen */
             <div className="flex flex-1 flex-col items-center justify-center p-2 text-center">
               <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-soft text-accent">
                 <MessageCircle size={26} />
@@ -254,42 +348,40 @@ export default function AIassistant() {
               </p>
             </div>
           ) : (
-            <>
-              {messages.map((message) => {
-                const isUser = message.role === "user";
+            messages.map((message) => {
+              const isUser = message.role === "user";
 
-                return (
+              return (
+                <div
+                  key={message.id}
+                  className={`flex items-start gap-3 ${
+                    isUser ? "flex-row-reverse" : ""
+                  }`}
+                >
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-accent">
+                    {isUser ? <User size={16} /> : <Bot size={17} />}
+                  </div>
+
                   <div
-                    key={message.id}
-                    className={`flex items-start gap-3 ${
-                      isUser ? "flex-row-reverse" : ""
+                    className={`min-w-0 max-w-[85%] wrap-break-word rounded-2xl px-4 py-3 text-sm/6 ${
+                      isUser
+                        ? "rounded-tr-sm bg-primary text-white whitespace-pre-wrap"
+                        : "rounded-tl-sm bg-background text-text"
                     }`}
                   >
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-accent">
-                      {isUser ? <User size={16} /> : <Bot size={17} />}
-                    </div>
-
-                    <div
-                      className={`min-w-0 max-w-[85%] wrap-break-word rounded-2xl px-4 py-3 text-sm/6 ${
-                        isUser
-                          ? "rounded-tr-sm bg-primary text-white whitespace-pre-wrap"
-                          : "rounded-tl-sm bg-background text-text"
-                      }`}
-                    >
-                      {isUser ? (
-                        message.content
-                      ) : (
-                        <div className="chat-markdown min-w-0">
-                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                            {message.content}
-                          </ReactMarkdown>
-                        </div>
-                      )}
-                    </div>
+                    {isUser ? (
+                      message.content
+                    ) : (
+                      <div className="chat-markdown min-w-0">
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                          {message.content}
+                        </ReactMarkdown>
+                      </div>
+                    )}
                   </div>
-                );
-              })}
-            </>
+                </div>
+              );
+            })
           )}
 
           {loading && (
@@ -305,8 +397,8 @@ export default function AIassistant() {
         </div>
       </div>
 
-      {/* Composer — stays at the bottom */}
-      <div className=" p-4">
+      {/* Composer */}
+      <div className="p-4">
         <form
           onSubmit={handleSend}
           className="flex items-end gap-2 rounded-xl border border-border bg-background p-2 transition-colors focus-within:border-accent"
