@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getStudyRoom } from "../services/studyRoomService";
-import { Plus, Upload, BookOpen, ArrowLeft } from "lucide-react";
+import { BookOpen, ArrowLeft } from "lucide-react";
 import NotesPanel from "../components/notes/NotesPanel";
 import FocusTimer from "../components/FocusTimer";
 import AIChat from "../components/AIChat";
+import FilesPanel from "../components/FilesPanel";
 import StudyRoomSkeleton from "../components/Skeletons/StudyRoomSkeleton";
 
 function StudyRoom() {
@@ -110,38 +111,7 @@ function StudyRoom() {
           // Three-panel workspace: fills the remaining height on desktop
           <div className="grid grid-cols-1 gap-5 lg:h-full lg:grid-cols-[minmax(220px,0.9fr)_minmax(350px,1.4fr)_minmax(280px,1fr)] lg:grid-rows-[minmax(0,1fr)]">
             {/* Uploaded Files */}
-            <section className="flex min-h-105 flex-col surface-card-padded lg:min-h-0">
-              <div className="mb-5 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-soft text-accent">
-                  <Upload size={20} />
-                </div>
-
-                <div>
-                  <h2 className="font-semibold">Uploaded Files</h2>
-                  <p className="text-sm text-text-muted">
-                    Your study materials
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex flex-1 flex-col items-center justify-center rounded-xl border border-dashed border-border p-6 text-center">
-                <Upload size={28} className="mb-3 text-text-muted" />
-
-                <p className="font-medium">Add your materials</p>
-
-                <p className="mt-2 text-sm/6 text-text-muted">
-                  Upload lecture slides, PDFs, and study documents.
-                </p>
-
-                <button
-                  type="button"
-                  className="mt-5 btn-primary-sm rounded-xl"
-                >
-                  <Plus size={16} />
-                  Upload file
-                </button>
-              </div>
-            </section>
+            <FilesPanel />
 
             {/* My Notes (section + editor modal) */}
             <NotesPanel roomId={room.id} />
