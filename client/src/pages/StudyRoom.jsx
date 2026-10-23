@@ -111,7 +111,7 @@ function StudyRoom() {
           // Three-panel workspace: fills the remaining height on desktop
           <div className="grid grid-cols-1 gap-5 lg:h-full lg:grid-cols-[minmax(220px,0.9fr)_minmax(350px,1.4fr)_minmax(280px,1fr)] lg:grid-rows-[minmax(0,1fr)]">
             {/* Uploaded Files */}
-            <FilesPanel />
+            <FilesPanel roomId={room.id} />
 
             {/* My Notes (section + editor modal) */}
             <NotesPanel roomId={room.id} />
