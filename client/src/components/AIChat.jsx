@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { supabase } from "../lib/supabaseClient";
 import { useParams } from "react-router-dom";
 import {
   createConversation,
@@ -164,15 +165,22 @@ export default function AIassistant() {
       });
 
       // Ask Gemini for a response.
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session) {
+        throw new Error("Your session has expired. Please log in again.");
+      }
+
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
         },
-        body: JSON.stringify({
-          message: userMessage,
-          history,
-        }),
+        body: JSON.stringify({ message: userMessage, history }),
+        signal: AbortSignal.timeout(60000), // give up after 60 seconds
       });
 
       const data = await response.json();
