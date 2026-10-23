@@ -8,6 +8,7 @@ export const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB, matches the bucket limi
 const MIME_BY_EXTENSION = {
   pdf: "application/pdf",
   docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
   txt: "text/plain",
   md: "text/markdown",
 };
@@ -92,4 +93,32 @@ export async function deleteDocument(document) {
     .eq("id", document.id);
 
   if (error) throw error;
+}
+
+// Asks the Express server to extract, chunk and embed an uploaded file.
+export async function processDocument(documentId) {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    throw new Error("Your session has expired. Please log in again.");
+  }
+
+  const response = await fetch(
+    `${import.meta.env.VITE_API_URL}/api/documents/${documentId}/process`,
+    {
+      method: "POST",
+      headers: { Authorization: `Bearer ${session.access_token}` },
+      signal: AbortSignal.timeout(120000), // large files can take a while
+    },
+  );
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(data.error || "Could not process this file.");
+  }
+
+  return data;
 }

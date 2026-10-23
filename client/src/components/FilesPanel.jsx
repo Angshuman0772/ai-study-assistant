@@ -5,13 +5,21 @@ import {
   getDocuments,
   uploadDocument,
   deleteDocument,
+  processDocument,
   MAX_FILE_SIZE,
 } from "../services/documentService";
+
+const STATUS_LABELS = {
+  uploaded: { text: "Not processed", className: "text-text-muted" },
+  processing: { text: "Processing...", className: "text-text-muted" },
+  ready: { text: "Ready", className: "text-success" },
+  failed: { text: "Failed", className: "text-red-500" },
+};
 
 const FilesPanel = ({ roomId }) => {
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [uploading, setUploading] = useState(false);
+  const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
   // Load the room's saved files.
@@ -43,30 +51,58 @@ const FilesPanel = ({ roomId }) => {
     };
   }, [roomId]);
 
+  const updateStatus = (documentId, status) => {
+    setDocuments((current) =>
+      current.map((d) => (d.id === documentId ? { ...d, status } : d)),
+    );
+  };
+
+  // Runs server-side processing and reflects its progress in the list.
+  const runProcessing = async (document) => {
+    updateStatus(document.id, "processing");
+
+    try {
+      await processDocument(document.id);
+      updateStatus(document.id, "ready");
+    } catch (err) {
+      console.error("Processing failed:", err);
+      updateStatus(document.id, "failed");
+      setError(`${document.name}: ${err.message}`);
+    }
+  };
+
+  const retryProcessing = async (document) => {
+    setError("");
+    setBusy(true);
+    await runProcessing(document);
+    setBusy(false);
+  };
+
   const onDrop = async (acceptedFiles) => {
     if (acceptedFiles.length === 0) return;
 
-    setUploading(true);
+    setBusy(true);
     setError("");
 
-    const failures = [];
+    const uploadFailures = [];
 
-    // One at a time keeps things simple and gives clear per-file errors.
+    // One at a time keeps things simple and avoids hammering the AI API.
     for (const file of acceptedFiles) {
       try {
         const saved = await uploadDocument({ roomId, file });
         setDocuments((current) => [saved, ...current]);
+        await runProcessing(saved);
       } catch (err) {
         console.error("Upload failed:", err);
-        failures.push(file.name);
+        uploadFailures.push(file.name);
       }
     }
 
-    if (failures.length > 0) {
-      setError(`Couldn't upload: ${failures.join(", ")}`);
+    if (uploadFailures.length > 0) {
+      setError(`Couldn't upload: ${uploadFailures.join(", ")}`);
     }
 
-    setUploading(false);
+    setBusy(false);
   };
 
   const onDropRejected = (rejections) => {
@@ -81,12 +117,14 @@ const FilesPanel = ({ roomId }) => {
       "application/pdf": [".pdf"],
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
         [".docx"],
+      "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+        [".pptx"],
       "text/plain": [".txt"],
       "text/markdown": [".md"],
     },
     maxSize: MAX_FILE_SIZE,
     multiple: true,
-    disabled: uploading,
+    disabled: busy,
     noClick: true,
     noKeyboard: true,
   });
@@ -128,21 +166,21 @@ const FilesPanel = ({ roomId }) => {
         <Upload size={28} className="mb-3 text-text-muted" />
 
         <p className="font-medium">
-          {uploading
-            ? "Uploading..."
+          {busy
+            ? "Working on your files..."
             : isDragActive
               ? "Drop your files here"
               : "Add your materials"}
         </p>
 
         <p className="mt-2 text-sm/6 text-text-muted">
-          Drag and drop PDFs, DOCX, TXT, or Markdown files (up to 10 MB).
+          Drag and drop PDFs, DOCX, PPTX, TXT, or Markdown files (up to 10 MB).
         </p>
 
         <button
           type="button"
           onClick={open}
-          disabled={uploading}
+          disabled={busy}
           className="mt-5 btn-primary-sm rounded-xl disabled:opacity-50"
         >
           <Plus size={16} />
@@ -163,32 +201,51 @@ const FilesPanel = ({ roomId }) => {
           <div className="mt-4 max-h-60 space-y-2 overflow-y-auto">
             <h3 className="text-sm font-medium">Files ({documents.length})</h3>
 
-            {documents.map((document) => (
-              <div
-                key={document.id}
-                className="flex items-center gap-3 rounded-xl border border-border p-3"
-              >
-                <FileText size={20} className="shrink-0 text-accent" />
+            {documents.map((document) => {
+              const status =
+                STATUS_LABELS[document.status] ?? STATUS_LABELS.uploaded;
+              const canRetry =
+                document.status === "failed" || document.status === "uploaded";
 
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium">
-                    {document.name}
-                  </p>
-                  <p className="text-xs text-text-muted">
-                    {(document.size_bytes / 1024).toFixed(1)} KB
-                  </p>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => removeDocument(document)}
-                  className="rounded-lg p-2 text-text-muted transition hover:bg-primary-soft hover:text-accent"
-                  aria-label={`Delete ${document.name}`}
+              return (
+                <div
+                  key={document.id}
+                  className="flex items-center gap-3 rounded-xl border border-border p-3"
                 >
-                  <X size={16} />
-                </button>
-              </div>
-            ))}
+                  <FileText size={20} className="shrink-0 text-accent" />
+
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium">
+                      {document.name}
+                    </p>
+                    <p className="text-xs text-text-muted">
+                      {(document.size_bytes / 1024).toFixed(1)} KB ·{" "}
+                      <span className={status.className}>{status.text}</span>
+                    </p>
+                  </div>
+
+                  {canRetry && (
+                    <button
+                      type="button"
+                      onClick={() => retryProcessing(document)}
+                      disabled={busy}
+                      className="rounded-lg px-2 py-1 text-xs text-accent transition hover:bg-primary-soft disabled:opacity-50"
+                    >
+                      {document.status === "failed" ? "Retry" : "Process"}
+                    </button>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => removeDocument(document)}
+                    className="rounded-lg p-2 text-text-muted transition hover:bg-primary-soft hover:text-accent"
+                    aria-label={`Delete ${document.name}`}
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+              );
+            })}
           </div>
         )
       )}
