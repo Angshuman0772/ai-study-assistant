@@ -3,13 +3,11 @@ import { ArrowRight, Bot, Send } from "lucide-react";
 
 function Hero() {
   return (
-    <section className="border-b border-border">
+    <section>
       <div className="mx-auto grid max-w-6xl items-center gap-14 px-6 py-20 lg:grid-cols-[1.05fr_0.95fr] lg:py-28">
         <div>
-          <p className="mb-5 text-sm font-semibold uppercase tracking-[0.22em] text-accent">
-            Your study desk, upgraded
-          </p>
-          <h1 className="max-w-xl text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl">
+          <p className="eyebrow">Your study desk, upgraded</p>
+          <h1 className="max-w-xl text-4xl/[1.08] font-bold tracking-tight sm:text-5xl lg:text-6xl">
             Learn Smarter with AI
           </h1>
 
@@ -18,13 +16,12 @@ function Hero() {
             and get personalized study assistance powered by AI.
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center gap-4">
-            <Link
-              to="/dashboard"
-              className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 font-medium text-text transition-colors duration-200 hover:bg-primary-hover"
-            >
+          <div className="mt-8 flex flex-wrap items-center gap-4 ">
+            <Link to="/dashboard" className="btn-primary group">
               Get Started
-              <ArrowRight size={18} />
+              <div className="transition-transform duration-300 ease-in-out group-hover:translate-x-1">
+                <ArrowRight size={18} />
+              </div>
             </Link>
 
             <a

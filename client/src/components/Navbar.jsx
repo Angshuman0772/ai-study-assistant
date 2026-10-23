@@ -53,18 +53,12 @@ function Navbar() {
                   Dashboard
                 </Link>
 
-                <button
-                  onClick={handleSignOut}
-                  className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-text transition-colors duration-200 hover:bg-primary-hover"
-                >
+                <button onClick={handleSignOut} className="btn-primary-sm">
                   Sign Out
                 </button>
               </>
             ) : (
-              <Link
-                to="/auth"
-                className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-text transition-colors duration-200 hover:bg-primary-hover"
-              >
+              <Link to="/auth" className="btn-primary-sm">
                 Sign In
               </Link>
             ))}

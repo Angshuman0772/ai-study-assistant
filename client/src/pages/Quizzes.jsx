@@ -10,7 +10,7 @@ function Quizzes() {
           Practice
         </p>
         <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Quizzes</h1>
-        <p className="mt-4 max-w-xl text-lg leading-8 text-text-muted">
+        <p className="mt-4 max-w-xl text-lg/8 text-text-muted">
           Turn your notes into focused practice sessions and see what sticks.
         </p>
         <div className="mt-12 max-w-2xl rounded-2xl border border-border bg-surface p-6">
