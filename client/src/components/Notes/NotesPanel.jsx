@@ -131,8 +131,8 @@ function NotesPanel({ roomId }) {
   return (
     <>
       {/* My Notes */}
-      <section className="flex min-h-105 flex-col surface-card-padded">
-        <div className="mb-5 flex items-center justify-between gap-3">
+      <section className="flex min-h-105 flex-col surface-card-padded ">
+        <div className="mb-5 flex items-center justify-between gap-3 ">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-soft text-accent">
               <NotebookPen size={20} />
@@ -154,7 +154,7 @@ function NotesPanel({ roomId }) {
           </button>
         </div>
 
-        <div className="flex flex-1 flex-col overflow-y-auto">
+        <div className="flex flex-1 flex-col overflow-y-auto scroll-styled">
           {notesLoading ? (
             <ul
               className="space-y-3 animate-pulse"
