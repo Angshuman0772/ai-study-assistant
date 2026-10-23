@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { supabase } from "../lib/supabaseClient";
 import {
   createConversation,
   getConversations,
@@ -18,7 +19,10 @@ import {
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-export default function AIassistant() {
+// Keep only the fields the UI needs from a saved message row.
+const toChatMessage = ({ id, role, content }) => ({ id, role, content });
+
+export default function AIassistant({ fileContexts = [] }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -39,10 +43,11 @@ export default function AIassistant() {
     });
   }, [messages, loading]);
 
+  // Load the room's conversation list once, then open the latest conversation.
   useEffect(() => {
     let cancelled = false;
 
-    async function loadLatestConversation() {
+    async function loadConversations() {
       if (!roomId) {
         setLoadingHistory(false);
         return;
@@ -51,19 +56,21 @@ export default function AIassistant() {
       setLoadingHistory(true);
 
       try {
-        const conversations = await getConversations(roomId);
+        // getConversations orders by updated_at descending.
+        const list = (await getConversations(roomId)) ?? [];
 
         if (cancelled) return;
 
+        setConversations(list);
+
         // No previous conversations: start with an empty chat.
-        if (conversations.length === 0) {
+        if (list.length === 0) {
           setConversationId(null);
           setMessages([]);
           return;
         }
 
-        // getConversations orders by updated_at descending.
-        const latestConversation = conversations[0];
+        const latestConversation = list[0];
 
         const savedMessages = await getConversationMessages(
           latestConversation.id,
@@ -72,16 +79,9 @@ export default function AIassistant() {
         if (cancelled) return;
 
         setConversationId(latestConversation.id);
-
-        setMessages(
-          savedMessages.map((message) => ({
-            id: message.id,
-            role: message.role,
-            content: message.content,
-          })),
-        );
+        setMessages((savedMessages ?? []).map(toChatMessage));
       } catch (error) {
-        console.error("Failed to load conversation:", error);
+        console.error("Failed to load conversations:", error);
       } finally {
         if (!cancelled) {
           setLoadingHistory(false);
@@ -89,33 +89,15 @@ export default function AIassistant() {
       }
     }
 
-    loadLatestConversation();
+    loadConversations();
 
     return () => {
       cancelled = true;
     };
   }, [roomId]);
 
-  useEffect(() => {
-    async function loadConversations() {
-      if (!roomId) return;
-
-      try {
-        setLoadingHistory(true);
-
-        const data = await getConversations(roomId);
-        setConversations(data ?? []);
-      } catch (error) {
-        console.error("Failed to load conversations:", error);
-      } finally {
-        setLoadingHistory(false);
-      }
-    }
-
-    loadConversations();
-  }, [roomId]);
-
-  const handleSend = async () => {
+  const handleSend = async (e) => {
+    e?.preventDefault();
     const userMessage = input.trim();
 
     if (!userMessage || loading || loadingHistory) return;
@@ -143,6 +125,15 @@ export default function AIassistant() {
     setLoading(true);
 
     try {
+      // Get the access token first, so we fail before saving anything.
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session?.access_token) {
+        throw new Error("Please sign in to use the AI assistant.");
+      }
+
       // Create a database conversation only when needed.
       let activeConversationId = conversationId;
 
@@ -154,6 +145,9 @@ export default function AIassistant() {
 
         activeConversationId = conversation.id;
         setConversationId(activeConversationId);
+
+        // Show the new conversation in the History dropdown right away.
+        setConversations((prev) => [conversation, ...prev]);
       }
 
       // Persist the user's message.
@@ -168,17 +162,20 @@ export default function AIassistant() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
         },
         body: JSON.stringify({
           message: userMessage,
           history,
+          fileContexts,
         }),
       });
 
-      const data = await response.json();
+      // An error page isn't JSON, so don't let json() throw a SyntaxError.
+      const data = await response.json().catch(() => null);
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to get an AI response.");
+        throw new Error(data?.error || "Failed to get an AI response.");
       }
 
       // Persist Gemini's reply.
@@ -189,14 +186,7 @@ export default function AIassistant() {
       });
 
       // Add the persisted reply to React state.
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: savedReply.id,
-          role: savedReply.role,
-          content: savedReply.content,
-        },
-      ]);
+      setMessages((prev) => [...prev, toChatMessage(savedReply)]);
     } catch (error) {
       console.error("Chat request failed:", error);
 
@@ -237,7 +227,7 @@ export default function AIassistant() {
       const data = await getConversationMessages(conversation.id);
 
       setConversationId(conversation.id);
-      setMessages(data ?? []);
+      setMessages((data ?? []).map(toChatMessage));
     } catch (error) {
       console.error("Failed to load conversation:", error);
     } finally {

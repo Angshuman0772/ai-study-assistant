@@ -7,12 +7,16 @@ import FocusTimer from "../components/FocusTimer";
 import AIChat from "../components/AIChat";
 import FilesPanel from "../components/FilesPanel";
 import StudyRoomSkeleton from "../components/Skeletons/StudyRoomSkeleton";
+import { useRoomFiles } from "../hooks/useRoomFiles";
 
 function StudyRoom() {
   const { id } = useParams();
   const [room, setRoom] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const { files, notices, fileContexts, addFiles, removeFile } = useRoomFiles(
+    room?.id,
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -111,13 +115,18 @@ function StudyRoom() {
           // Three-panel workspace: fills the remaining height on desktop
           <div className="grid grid-cols-1 gap-5 lg:h-full lg:grid-cols-[minmax(220px,0.9fr)_minmax(350px,1.4fr)_minmax(280px,1fr)] lg:grid-rows-[minmax(0,1fr)]">
             {/* Uploaded Files */}
-            <FilesPanel />
+            <FilesPanel
+              files={files}
+              notices={notices}
+              onAddFiles={addFiles}
+              onRemoveFile={removeFile}
+            />
 
             {/* My Notes (section + editor modal) */}
             <NotesPanel roomId={room.id} />
 
             {/* AI Assistant */}
-            <AIChat />
+            <AIChat fileContexts={fileContexts} />
           </div>
         ) : (
           <p className="text-text-muted">Study room not found.</p>

@@ -2,10 +2,14 @@
   "type": "module",
   "dependencies": {
     "@google/genai": "^2.30.0",
+    "@supabase/supabase-js": "^2.118.0",
     "cors": "^2.8.6",
     "dotenv": "^18.0.6",
     "express": "^5.2.1",
-    "mongoose": "^9.11.1"
+    "mammoth": "^1.13.0",
+    "mongoose": "^9.11.1",
+    "multer": "^2.5.0",
+    "pdfjs-dist": "^6.4.299"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
