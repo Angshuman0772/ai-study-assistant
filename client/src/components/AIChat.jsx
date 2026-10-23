@@ -179,7 +179,7 @@ export default function AIassistant() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session.access_token}`,
         },
-        body: JSON.stringify({ message: userMessage, history }),
+        body: JSON.stringify({ message: userMessage, history, roomId }),
         signal: AbortSignal.timeout(60000), // give up after 60 seconds
       });
 
