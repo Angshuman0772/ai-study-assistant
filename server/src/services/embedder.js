@@ -1,15 +1,31 @@
 import ai from "../config/gemini.js";
+import { Embeddings } from "@langchain/core/embeddings";
 
 export const EMBEDDING_MODEL = "gemini-embedding-001";
 
-// Must match vector(768) in the Supabase table and function.
+// Must match the existing Supabase vector(768) schema.
 export const EMBEDDING_DIMENSIONS = 768;
 
 const BATCH_SIZE = 50;
 
-// Turns an array of strings into an array of vectors (one per string).
-// Use taskType "RETRIEVAL_DOCUMENT" for stored text and "RETRIEVAL_QUERY"
-// for questions. Gemini tunes the vectors differently for each.
+export class GeminiRetrievalEmbeddings extends Embeddings {
+  constructor() {
+    super({});
+  }
+
+  async embedDocuments(texts) {
+    return embedTexts(texts, "RETRIEVAL_DOCUMENT");
+  }
+
+  async embedQuery(text) {
+    const [vector] = await embedTexts([text], "RETRIEVAL_QUERY");
+
+    return vector;
+  }
+}
+
+export const embeddings = new GeminiRetrievalEmbeddings();
+
 export async function embedTexts(texts, taskType = "RETRIEVAL_DOCUMENT") {
   const vectors = [];
 
@@ -19,10 +35,13 @@ export async function embedTexts(texts, taskType = "RETRIEVAL_DOCUMENT") {
     const response = await ai.models.embedContent({
       model: EMBEDDING_MODEL,
       contents: batch,
-      config: { taskType, outputDimensionality: EMBEDDING_DIMENSIONS },
+      config: {
+        taskType,
+        outputDimensionality: EMBEDDING_DIMENSIONS,
+      },
     });
 
-    const values = response.embeddings?.map((e) => e.values);
+    const values = response.embeddings?.map((embedding) => embedding.values);
 
     if (!values || values.length !== batch.length) {
       throw new Error("Embedding response did not match the number of inputs.");
@@ -34,7 +53,8 @@ export async function embedTexts(texts, taskType = "RETRIEVAL_DOCUMENT") {
   for (const vector of vectors) {
     if (vector.length !== EMBEDDING_DIMENSIONS) {
       throw new Error(
-        `Expected ${EMBEDDING_DIMENSIONS} dimensions, got ${vector.length}.`,
+        `Expected ${EMBEDDING_DIMENSIONS} dimensions, ` +
+          `got ${vector.length}.`,
       );
     }
   }
@@ -42,8 +62,7 @@ export async function embedTexts(texts, taskType = "RETRIEVAL_DOCUMENT") {
   return vectors;
 }
 
-// Embeds a single question for searching (used in Phase 4).
+// Optional compatibility helper for any existing callers.
 export async function embedQuery(text) {
-  const [vector] = await embedTexts([text], "RETRIEVAL_QUERY");
-  return vector;
+  return embeddings.embedQuery(text);
 }

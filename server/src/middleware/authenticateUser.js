@@ -11,9 +11,7 @@ export async function authenticateUser(req, res, next) {
 
   try {
     // Asks Supabase Auth to validate the token.
-    console.time("auth");
     const { data, error } = await supabaseAdmin.auth.getUser(token);
-    console.timeEnd("auth");
 
     if (error || !data?.user) {
       return res.status(401).json({ error: "Invalid or expired session." });
