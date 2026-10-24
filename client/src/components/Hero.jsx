@@ -5,7 +5,7 @@ function Hero() {
   return (
     <section>
       <div className="mx-auto grid max-w-6xl items-center gap-14 px-6 py-20 lg:grid-cols-[1.05fr_0.95fr] lg:py-28">
-        <div>
+        <div data-gsap="intro">
           <p className="eyebrow">Your study desk, upgraded</p>
           <h1 className="max-w-xl text-4xl/[1.08] font-bold tracking-tight sm:text-5xl lg:text-6xl">
             Learn Smarter with AI
@@ -36,6 +36,7 @@ function Hero() {
         {/* Example conversation */}
         <div
           aria-hidden="true"
+          data-gsap="intro"
           className="rounded-2xl border border-border bg-surface shadow-glow"
         >
           <div className="flex items-center gap-3 border-b border-border px-5 py-4">

@@ -160,6 +160,7 @@ export default function About() {
           {/* Many tools → one place */}
           <div
             aria-hidden="true"
+            data-gsap="reveal"
             className="rounded-3xl border border-border bg-surface p-8 shadow-glow"
           >
             <ul className="flex flex-wrap gap-2">
@@ -207,7 +208,11 @@ export default function About() {
             const Icon = feature.icon;
 
             return (
-              <div key={feature.title} className="bg-surface p-6 sm:p-8">
+              <div
+                key={feature.title}
+                data-gsap="reveal"
+                className="bg-surface p-6 sm:p-8"
+              >
                 <span className="mb-5 flex size-11 items-center justify-center rounded-lg bg-primary-soft text-accent">
                   <Icon size={22} />
                 </span>
@@ -227,7 +232,11 @@ export default function About() {
 
         <ol className="grid gap-8 lg:grid-cols-5">
           {steps.map((step, index) => (
-            <li key={step.title} className="relative flex gap-4 lg:block">
+            <li
+              key={step.title}
+              data-gsap="reveal"
+              className="relative flex gap-4 lg:block"
+            >
               <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary font-bold text-text">
                 {index + 1}
               </span>
@@ -259,6 +268,7 @@ export default function About() {
           {stack.map(({ group, items }) => (
             <div
               key={group}
+              data-gsap="reveal"
               className="grid gap-4 p-6 sm:grid-cols-[9rem_1fr] sm:items-center"
             >
               <h3 className="font-semibold text-accent">{group}</h3>
@@ -281,11 +291,14 @@ export default function About() {
       {/* WHY I BUILT THIS */}
       <section className="mx-auto max-w-6xl px-6 py-20">
         <div className="grid gap-8 lg:grid-cols-3 lg:gap-16">
-          <h2 className="text-3xl font-bold sm:text-4xl">
+          <h2 data-gsap="reveal" className="text-3xl font-bold sm:text-4xl">
             Why I Built StudyFlow
           </h2>
 
-          <p className="border-l-2 border-primary pl-6 text-xl/relaxed text-text-muted lg:col-span-2">
+          <p
+            data-gsap="reveal"
+            className="border-l-2 border-primary pl-6 text-xl/relaxed text-text-muted lg:col-span-2"
+          >
             As a Computer Science student, I wanted to explore how artificial
             intelligence can improve learning experiences. StudyFlow combines
             modern web development, AI integration, and educational tools into a
@@ -306,6 +319,7 @@ export default function About() {
           {roadmap.map((item) => (
             <div
               key={item}
+              data-gsap="reveal"
               className="flex items-center gap-3 rounded-xl border border-dashed border-border-strong bg-surface/50 p-5"
             >
               <span className="text-accent">○</span>
@@ -317,7 +331,10 @@ export default function About() {
 
       {/* CTA */}
       <section className="mx-auto max-w-6xl px-6 pb-24 pt-8">
-        <div className="flex flex-col items-start justify-between gap-8 rounded-2xl border border-primary/40 bg-primary-soft p-10 md:flex-row md:items-center md:p-14">
+        <div
+          data-gsap="reveal"
+          className="flex flex-col items-start justify-between gap-8 rounded-2xl border border-primary/40 bg-primary-soft p-10 md:flex-row md:items-center md:p-14"
+        >
           <div className="max-w-xl">
             <h2 className="text-3xl font-bold md:text-4xl">
               Ready to Learn Smarter?

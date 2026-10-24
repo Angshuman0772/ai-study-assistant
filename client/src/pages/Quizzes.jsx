@@ -13,7 +13,10 @@ function Quizzes() {
         <p className="mt-4 max-w-xl text-lg/8 text-text-muted">
           Turn your notes into focused practice sessions and see what sticks.
         </p>
-        <div className="mt-12 max-w-2xl rounded-2xl border border-border bg-surface p-6">
+        <div
+          data-gsap="reveal"
+          className="mt-12 max-w-2xl rounded-2xl border border-border bg-surface p-6"
+        >
           <div className="flex size-11 items-center justify-center rounded-xl border border-border-strong bg-primary-soft text-accent">
             <ListChecks size={22} />
           </div>

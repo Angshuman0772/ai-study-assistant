@@ -10,7 +10,10 @@ function Profile() {
           Account
         </p>
         <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Profile</h1>
-        <div className="mt-12 max-w-2xl rounded-2xl border border-border bg-surface p-6">
+        <div
+          data-gsap="reveal"
+          className="mt-12 max-w-2xl rounded-2xl border border-border bg-surface p-6"
+        >
           <div className="flex size-11 items-center justify-center rounded-xl border border-border-strong bg-primary-soft text-accent">
             <UserRound size={22} />
           </div>

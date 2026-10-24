@@ -220,7 +220,10 @@ function Home() {
 
       {/* CTA */}
       <section className="mx-auto max-w-6xl px-6 pb-24">
-        <div className="flex flex-col items-start justify-between gap-8 rounded-3xl border border-primary/30 bg-primary-soft p-10 md:flex-row md:items-center md:p-14">
+        <div
+          data-gsap="reveal"
+          className="flex flex-col items-start justify-between gap-8 rounded-3xl border border-primary/30 bg-primary-soft p-10 md:flex-row md:items-center md:p-14"
+        >
           <div className="max-w-xl">
             <h2 className="text-3xl font-bold">
               Start with your next set of notes

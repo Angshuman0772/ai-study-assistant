@@ -85,7 +85,7 @@ function Dashboard() {
       {/* Quick Stats */}
       <section className="max-w-6xl mx-auto px-4 py-6">
         <h2 className="text-2xl font-bold mb-8">Quick Stats</h2>
-        <div className="overflow-hidden surface-card">
+        <div data-gsap="reveal" className="overflow-hidden surface-card">
           {/* Stats Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4">
             {/* Stat 1 */}
@@ -176,6 +176,7 @@ function Dashboard() {
               <Link
                 key={room.id}
                 to={`/study-rooms/${room.id}`}
+                data-gsap="reveal"
                 className="surface-card-interactive"
               >
                 <div className="flex items-start justify-between gap-3">

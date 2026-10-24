@@ -6,7 +6,10 @@ function FeatureCard({
   children,
 }) {
   return (
-    <div className={`flex flex-col surface-card-interactive ${className}`}>
+    <div
+      data-gsap="reveal"
+      className={`flex flex-col surface-card-interactive ${className}`}
+    >
       {Icon && (
         <span className="mb-5 flex size-10 items-center justify-center rounded-lg bg-primary-soft text-accent">
           <Icon size={20} />

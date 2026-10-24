@@ -55,7 +55,8 @@
 
   .surface-card-interactive {
     @apply rounded-2xl border border-border bg-surface p-6
-      transition-colors hover:border-border-strong hover:bg-card;
+      transition-[transform,border-color,background-color,box-shadow] duration-300 ease-out
+      hover:-translate-y-1 hover:border-border-strong hover:bg-card hover:shadow-glow;
   }
   .eyebrow {
     @apply mb-5 text-sm font-semibold uppercase tracking-[0.22em] text-accent;
@@ -96,6 +97,24 @@
   :focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .surface-card-interactive:hover {
+    transform: none;
   }
 }
 

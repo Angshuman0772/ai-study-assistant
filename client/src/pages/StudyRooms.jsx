@@ -181,7 +181,11 @@ function StudyRooms() {
                 const Icon = getRoomIcon(room.subject);
 
                 return (
-                  <div key={room.id} className="surface-card-interactive">
+                  <div
+                    key={room.id}
+                    data-gsap="reveal"
+                    className="surface-card-interactive"
+                  >
                     <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl border border-border-strong bg-primary-soft text-accent">
                       <Icon size={24} />
                     </div>
