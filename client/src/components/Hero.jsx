@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { ArrowRight, Bot, Send } from "lucide-react";
 
 function Hero() {

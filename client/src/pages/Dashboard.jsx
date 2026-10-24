@@ -1,6 +1,6 @@
 import Navbar from "../components/Navbar";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { getStudyRooms } from "../services/studyRoomService";
 import { useAuth } from "../context/AuthContext";
 import { BookOpen, ArrowRight } from "lucide-react";

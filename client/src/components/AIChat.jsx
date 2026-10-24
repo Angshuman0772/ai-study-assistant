@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { supabase } from "../lib/supabaseClient";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import {
   createConversation,
   getConversations,

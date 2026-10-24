@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { Play, Pause, RotateCcw, Save } from "lucide-react";
 import { saveFocusSession } from "../services/focusTimerService";

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link } from "react-router";
 import { getStudyRoom } from "../services/studyRoomService";
 import { BookOpen, ArrowLeft } from "lucide-react";
 import NotesPanel from "../components/notes/NotesPanel";
