@@ -1,7 +1,19 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { createStudyRoom, getStudyRooms } from "../services/studyRoomService";
-import { Plus, Search, BookOpen, Brain, Code, Calculator } from "lucide-react";
+import {
+  createStudyRoom,
+  getStudyRooms,
+  deleteStudyRoom,
+} from "../services/studyRoomService";
+import {
+  Plus,
+  Search,
+  BookOpen,
+  Brain,
+  Code,
+  Calculator,
+  Trash2,
+} from "lucide-react";
 import Navbar from "../components/Navbar";
 
 function StudyRooms() {
@@ -17,6 +29,7 @@ function StudyRooms() {
 
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
   const [error, setError] = useState("");
 
   // Choose an icon based on the room's subject.
@@ -93,6 +106,26 @@ function StudyRooms() {
       setError(err.message || "Could not create study room.");
     } finally {
       setCreating(false);
+    }
+  }
+
+  async function handleDeleteRoom(room) {
+    const confirmed = window.confirm(
+      `Delete "${room.name}"?\n\nThis permanently deletes the room's notes, uploaded files, study sessions and entire AI chat history. This can't be undone.`,
+    );
+    if (!confirmed) return;
+
+    setDeletingId(room.id);
+    setError("");
+
+    try {
+      await deleteStudyRoom(room.id);
+      setRooms((previous) => previous.filter((r) => r.id !== room.id));
+    } catch (err) {
+      console.error("Failed to delete study room:", err);
+      setError(err.message || "Could not delete study room.");
+    } finally {
+      setDeletingId(null);
     }
   }
 
@@ -206,12 +239,24 @@ function StudyRooms() {
                         Study room
                       </span>
 
-                      <button
-                        onClick={() => navigate(`/study-rooms/${room.id}`)}
-                        className="font-medium text-primary hover:underline"
-                      >
-                        Open Room →
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleDeleteRoom(room)}
+                          disabled={deletingId === room.id}
+                          aria-label={`Delete ${room.name}`}
+                          title="Delete room"
+                          className="rounded-lg p-2 text-text-muted transition-colors hover:bg-primary-soft hover:text-red-500 disabled:opacity-50"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+
+                        <button
+                          onClick={() => navigate(`/study-rooms/${room.id}`)}
+                          className="font-medium text-primary hover:underline"
+                        >
+                          Open Room →
+                        </button>
+                      </div>
                     </div>
                   </div>
                 );
