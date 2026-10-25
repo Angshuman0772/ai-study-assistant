@@ -1,8 +1,7 @@
 import { Document } from "@langchain/core/documents";
-import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
-import { DocxLoader } from "@langchain/community/document_loaders/fs/docx";
-import { PPTXLoader } from "@langchain/community/document_loaders/fs/pptx";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
+import { extractText, getDocumentProxy } from "unpdf";
+import { OfficeParser } from "officeparser";
 
 const MIME_TYPES = {
   PDF: "application/pdf",
@@ -35,7 +34,6 @@ function addMarkdownStructure(documents, fileName, mimeType) {
 
       if (!content) return null;
 
-      // Markdown already has its own headings and formatting.
       if (mimeType === MIME_TYPES.MARKDOWN) {
         return new Document({
           pageContent: content,
@@ -49,7 +47,6 @@ function addMarkdownStructure(documents, fileName, mimeType) {
 
       let heading = `# ${fileName}`;
 
-      // PDFLoader can return individual page documents.
       if (mimeType === MIME_TYPES.PDF) {
         const pageNumber =
           doc.metadata?.loc?.pageNumber ??
@@ -59,9 +56,8 @@ function addMarkdownStructure(documents, fileName, mimeType) {
         heading = `## Page ${pageNumber}`;
       }
 
-      // Preserve slide markers if PPTXLoader supplies them.
       if (mimeType === MIME_TYPES.PPTX) {
-        heading = `## Presentation content`;
+        heading = "## Presentation content";
       }
 
       const markdown =
@@ -82,44 +78,74 @@ function addMarkdownStructure(documents, fileName, mimeType) {
     .filter(Boolean);
 }
 
+async function loadPdfDocuments(buffer) {
+  const pdf = await getDocumentProxy(new Uint8Array(buffer));
+  const { text, totalPages } = await extractText(pdf, {
+    mergePages: false,
+  });
+
+  if (!Array.isArray(text)) {
+    throw new Error("PDF parser did not return page-level text.");
+  }
+
+  return text.map(
+    (pageContent, index) =>
+      new Document({
+        pageContent,
+        metadata: {
+          loc: { pageNumber: index + 1 },
+          totalPages,
+        },
+      }),
+  );
+}
+
+async function loadOfficeDocuments(buffer, mimeType) {
+  const ast = await OfficeParser.parseOffice(new Uint8Array(buffer), {
+    extractAttachments: false,
+  });
+
+  const { value } = await ast.to("text");
+  const content = normalizeText(value);
+
+  if (!content) return [];
+
+  return [
+    new Document({
+      pageContent: content,
+      metadata: {
+        source: undefined,
+        mimeType,
+      },
+    }),
+  ];
+}
+
 export async function loadDocumentAsMarkdown({ buffer, mimeType, fileName }) {
-  const blob = new Blob([buffer], { type: mimeType });
-  let loader;
   let loadedDocuments;
 
   switch (mimeType) {
     case MIME_TYPES.PDF:
-      loader = new PDFLoader(blob);
+      loadedDocuments = await loadPdfDocuments(buffer);
       break;
 
     case MIME_TYPES.DOCX:
-      loader = new DocxLoader(blob);
-      break;
-
     case MIME_TYPES.PPTX:
-      loader = new PPTXLoader(blob);
+      loadedDocuments = await loadOfficeDocuments(buffer, mimeType);
       break;
 
     case MIME_TYPES.TXT:
-    case MIME_TYPES.MARKDOWN: {
-      // Plain text and Markdown require no binary document parser.
-      const content = await blob.text();
-
+    case MIME_TYPES.MARKDOWN:
       loadedDocuments = [
         new Document({
-          pageContent: content,
+          pageContent: buffer.toString("utf8"),
           metadata: { source: fileName },
         }),
       ];
       break;
-    }
 
     default:
       throw new Error(`Unsupported file type: ${mimeType}`);
-  }
-
-  if (!loadedDocuments) {
-    loadedDocuments = await loader.load();
   }
 
   return addMarkdownStructure(loadedDocuments, fileName, mimeType);
