@@ -27,8 +27,8 @@ function App() {
           <Route path="/study-rooms" element={<StudyRooms />} />
           <Route path="/study-rooms/:id" element={<StudyRoom />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/flashcards" element={<Flashcards />} />
-          <Route path="/quizzes" element={<Quizzes />} />
+          <Route path="/study-rooms/:id/flashcards" element={<Flashcards />} />
+          <Route path="/study-rooms/:id/quizzes" element={<Quizzes />} />
         </Route>
       </Routes>
     </>
