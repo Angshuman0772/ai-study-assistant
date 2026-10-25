@@ -1,6 +1,14 @@
 import { useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
-import { Upload, Plus, FileText, X } from "lucide-react";
+import {
+  Upload,
+  Plus,
+  FileText,
+  X,
+  Layers,
+  ClipboardCheck,
+} from "lucide-react";
+import { useNavigate } from "react-router";
 import {
   getDocuments,
   uploadDocument,
@@ -8,6 +16,7 @@ import {
   processDocument,
   MAX_FILE_SIZE,
 } from "../services/documentService";
+import UploadedFilesSkeleton from "./Skeletons/UploadedFilesSkeleton";
 
 const STATUS_LABELS = {
   uploaded: { text: "Not processed", className: "text-text-muted" },
@@ -17,6 +26,8 @@ const STATUS_LABELS = {
 };
 
 const FilesPanel = ({ roomId }) => {
+  const navigate = useNavigate();
+
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
@@ -24,8 +35,6 @@ const FilesPanel = ({ roomId }) => {
 
   // Load the room's saved files.
   useEffect(() => {
-    if (!roomId) return;
-
     let cancelled = false;
 
     async function loadDocuments() {
@@ -34,13 +43,19 @@ const FilesPanel = ({ roomId }) => {
 
       try {
         const data = await getDocuments(roomId);
-        if (!cancelled) setDocuments(data);
+
+        if (!cancelled) {
+          setDocuments(data);
+        }
       } catch (err) {
         if (cancelled) return;
+
         console.error("Error loading documents:", err);
         setError("Couldn't load your files. Please try again.");
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     }
 
@@ -53,11 +68,13 @@ const FilesPanel = ({ roomId }) => {
 
   const updateStatus = (documentId, status) => {
     setDocuments((current) =>
-      current.map((d) => (d.id === documentId ? { ...d, status } : d)),
+      current.map((document) =>
+        document.id === documentId ? { ...document, status } : document,
+      ),
     );
   };
 
-  // Runs server-side processing and reflects its progress in the list.
+  // Runs server-side processing and reflects its progress.
   const runProcessing = async (document) => {
     updateStatus(document.id, "processing");
 
@@ -66,6 +83,7 @@ const FilesPanel = ({ roomId }) => {
       updateStatus(document.id, "ready");
     } catch (err) {
       console.error("Processing failed:", err);
+
       updateStatus(document.id, "failed");
       setError(`${document.name}: ${err.message}`);
     }
@@ -74,10 +92,15 @@ const FilesPanel = ({ roomId }) => {
   const retryProcessing = async (document) => {
     setError("");
     setBusy(true);
-    await runProcessing(document);
-    setBusy(false);
+
+    try {
+      await runProcessing(document);
+    } finally {
+      setBusy(false);
+    }
   };
 
+  // Upload and process accepted files sequentially.
   const onDrop = async (acceptedFiles) => {
     if (acceptedFiles.length === 0) return;
 
@@ -86,27 +109,31 @@ const FilesPanel = ({ roomId }) => {
 
     const uploadFailures = [];
 
-    // One at a time keeps things simple and avoids hammering the AI API.
-    for (const file of acceptedFiles) {
-      try {
-        const saved = await uploadDocument({ roomId, file });
-        setDocuments((current) => [saved, ...current]);
-        await runProcessing(saved);
-      } catch (err) {
-        console.error("Upload failed:", err);
-        uploadFailures.push(file.name);
+    try {
+      for (const file of acceptedFiles) {
+        try {
+          const saved = await uploadDocument({ roomId, file });
+
+          setDocuments((current) => [saved, ...current]);
+
+          await runProcessing(saved);
+        } catch (err) {
+          console.error(`Upload failed for ${file.name}:`, err);
+          uploadFailures.push(file.name);
+        }
       }
-    }
 
-    if (uploadFailures.length > 0) {
-      setError(`Couldn't upload: ${uploadFailures.join(", ")}`);
+      if (uploadFailures.length > 0) {
+        setError(`Couldn't upload: ${uploadFailures.join(", ")}`);
+      }
+    } finally {
+      setBusy(false);
     }
-
-    setBusy(false);
   };
 
   const onDropRejected = (rejections) => {
-    const names = rejections.map((r) => r.file.name).join(", ");
+    const names = rejections.map((rejection) => rejection.file.name).join(", ");
+
     setError(`Not accepted (wrong type or over 10 MB): ${names}`);
   };
 
@@ -134,120 +161,214 @@ const FilesPanel = ({ roomId }) => {
 
     try {
       setError("");
+
       await deleteDocument(document);
-      setDocuments((current) => current.filter((d) => d.id !== document.id));
+
+      setDocuments((current) =>
+        current.filter((item) => item.id !== document.id),
+      );
     } catch (err) {
       console.error("Delete failed:", err);
       setError("Couldn't delete the file. Please try again.");
     }
   };
 
+  const hasDocuments = documents.length > 0;
+
   return (
     <section className="flex min-h-105 flex-col surface-card-padded lg:min-h-0">
-      <div className="mb-5 flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-soft text-accent">
+      {/* Panel header */}
+      <div className="mb-4 flex items-center gap-3">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-accent">
           <Upload size={20} />
         </div>
 
-        <div>
-          <h2 className="font-semibold">Uploaded Files</h2>
-          <p className="text-sm text-text-muted">Your study materials</p>
+        <div className="min-w-0">
+          <h2 className="font-semibold">Study Materials</h2>
+          <p className="text-sm text-text-muted">
+            Upload files and study from them
+          </p>
         </div>
+
+        {hasDocuments && (
+          <button
+            type="button"
+            onClick={open}
+            disabled={busy}
+            className="ml-auto inline-flex shrink-0 items-center gap-1.5 rounded-xl border border-border px-3 py-2 text-sm transition hover:bg-primary-soft disabled:opacity-50"
+          >
+            <Plus size={16} />
+            Add
+          </button>
+        )}
       </div>
 
-      {loading ? (
-        <p className="mb-4 text-sm text-text-muted">Loading files...</p>
-      ) : (
-        documents.length > 0 && (
-          <div className="mb-4 max-h-60 space-y-2 overflow-y-auto scroll-styled">
-            <h3 className="text-sm font-medium">Files ({documents.length})</h3>
-
-            {documents.map((document) => {
-              const status =
-                STATUS_LABELS[document.status] ?? STATUS_LABELS.uploaded;
-              const canRetry =
-                document.status === "failed" || document.status === "uploaded";
-
-              return (
-                <div
-                  key={document.id}
-                  className="flex items-center gap-3 rounded-xl border border-border p-3"
-                >
-                  <FileText size={20} className="shrink-0 text-accent" />
-
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium">
-                      {document.name}
-                    </p>
-                    <p className="text-xs text-text-muted">
-                      {(document.size_bytes / 1024).toFixed(1)} KB ·{" "}
-                      <span className={status.className}>{status.text}</span>
-                    </p>
-                  </div>
-
-                  {canRetry && (
-                    <button
-                      type="button"
-                      onClick={() => retryProcessing(document)}
-                      disabled={busy}
-                      className="rounded-lg px-2 py-1 text-xs text-accent transition hover:bg-primary-soft disabled:opacity-50"
-                    >
-                      {document.status === "failed" ? "Retry" : "Process"}
-                    </button>
-                  )}
-
-                  <button
-                    type="button"
-                    onClick={() => removeDocument(document)}
-                    className="rounded-lg p-2 text-text-muted transition hover:bg-primary-soft hover:text-accent"
-                    aria-label={`Delete ${document.name}`}
-                  >
-                    <X size={16} />
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        )
-      )}
-
-      <div
-        {...getRootProps()}
-        className={`flex flex-1 flex-col items-center justify-center rounded-xl border border-dashed p-6 text-center transition-colors ${
-          isDragActive ? "border-accent bg-primary-soft" : "border-border"
-        }`}
-      >
-        <input {...getInputProps()} />
-
-        <Upload size={28} className="mb-3 text-text-muted" />
-
-        <p className="font-medium">
-          {busy
-            ? "Working on your files..."
-            : isDragActive
-              ? "Drop your files here"
-              : "Add your materials"}
-        </p>
-
-        <p className="mt-2 text-sm/6 text-text-muted">
-          Drag and drop PDFs, DOCX, PPTX, TXT, or Markdown files (up to 10 MB).
-        </p>
-
-        <button
-          type="button"
-          onClick={open}
-          disabled={busy}
-          className="mt-5 btn-primary-sm rounded-xl disabled:opacity-50"
-        >
-          <Plus size={16} />
-          Upload file
-        </button>
-      </div>
-
+      {/* Error message */}
       {error && (
-        <p role="alert" className="mt-4 text-sm text-red-500">
+        <p role="alert" className="mb-3 text-sm text-red-500">
           {error}
         </p>
+      )}
+
+      {/* Loading state */}
+      {loading ? (
+        <UploadedFilesSkeleton />
+      ) : !hasDocuments ? (
+        /* EMPTY STATE: large upload dropzone */
+        <div
+          {...getRootProps()}
+          className={`flex flex-1 flex-col items-center justify-center rounded-xl border border-dashed p-6 text-center transition-colors ${
+            isDragActive ? "border-accent bg-primary-soft" : "border-border"
+          }`}
+        >
+          <input {...getInputProps()} />
+
+          <Upload size={28} className="mb-3 text-text-muted" />
+
+          <p className="font-medium">
+            {busy
+              ? "Working on your files..."
+              : isDragActive
+                ? "Drop your files here"
+                : "Add your materials"}
+          </p>
+
+          <p className="mt-2 text-sm/6 text-text-muted">
+            Drag and drop PDFs, DOCX, PPTX, TXT, or Markdown files (up to 10
+            MB).
+          </p>
+
+          <button
+            type="button"
+            onClick={open}
+            disabled={busy}
+            className="mt-5 btn-primary-sm rounded-xl disabled:opacity-50"
+          >
+            <Plus size={16} />
+            Upload files
+          </button>
+        </div>
+      ) : (
+        <>
+          {/* FILE LIST: acts as the dropzone */}
+          <div
+            {...getRootProps()}
+            className={`mb-4 rounded-xl border p-3 transition-colors ${
+              isDragActive ? "border-accent bg-primary-soft" : "border-border"
+            }`}
+          >
+            <input {...getInputProps()} />
+
+            <div className="mb-3 flex items-center justify-between gap-2">
+              <h3 className="text-sm font-medium">
+                Files ({documents.length})
+              </h3>
+
+              <span className="text-xs text-text-muted">
+                {isDragActive ? "Drop to upload" : "Drag files here"}
+              </span>
+            </div>
+
+            {isDragActive && (
+              <div className="mb-3 rounded-lg border border-dashed border-accent bg-primary-soft p-3 text-center text-sm text-accent">
+                Drop your files to upload
+              </div>
+            )}
+
+            <div className="max-h-48 space-y-2 overflow-y-auto scroll-styled">
+              {documents.map((document) => {
+                const status =
+                  STATUS_LABELS[document.status] ?? STATUS_LABELS.uploaded;
+
+                const canRetry =
+                  document.status === "failed" ||
+                  document.status === "uploaded";
+
+                return (
+                  <div
+                    key={document.id}
+                    className="flex items-center gap-2 rounded-lg bg-surface-secondary p-2"
+                  >
+                    <FileText size={18} className="shrink-0 text-accent" />
+
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium">
+                        {document.name}
+                      </p>
+
+                      <p className="text-xs text-text-muted">
+                        {(document.size_bytes / 1024).toFixed(1)} KB
+                        {" · "}
+                        <span className={status.className}>{status.text}</span>
+                      </p>
+                    </div>
+
+                    {canRetry && (
+                      <button
+                        type="button"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          retryProcessing(document);
+                        }}
+                        disabled={busy}
+                        className="rounded-lg px-2 py-1 text-xs text-accent transition hover:bg-primary-soft disabled:opacity-50"
+                      >
+                        {document.status === "failed" ? "Retry" : "Process"}
+                      </button>
+                    )}
+
+                    <button
+                      type="button"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        removeDocument(document);
+                      }}
+                      className="rounded-lg p-1.5 text-text-muted transition hover:bg-primary-soft hover:text-accent"
+                      aria-label={`Delete ${document.name}`}
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* STUDY TOOLS  */}
+          <div className="mt-auto">
+            <p className="mb-3 text-sm font-medium">Study Tools</p>
+
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => navigate(`/study-rooms/${roomId}/flashcards`)}
+                className="flex min-w-0 flex-col items-start rounded-xl border border-border p-3 text-left transition hover:border-accent hover:bg-primary-soft"
+              >
+                <Layers size={21} className="mb-3 text-accent" />
+
+                <span className="text-sm font-medium">Flashcards</span>
+
+                <span className="mt-1 text-xs text-text-muted">
+                  Review key concepts
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => navigate(`/study-rooms/${roomId}/quizzes`)}
+                className="flex min-w-0 flex-col items-start rounded-xl border border-border p-3 text-left transition hover:border-accent hover:bg-primary-soft"
+              >
+                <ClipboardCheck size={21} className="mb-3 text-accent" />
+
+                <span className="text-sm font-medium">Quizzes</span>
+
+                <span className="mt-1 text-xs text-text-muted">
+                  Test your knowledge
+                </span>
+              </button>
+            </div>
+          </div>
+        </>
       )}
     </section>
   );
