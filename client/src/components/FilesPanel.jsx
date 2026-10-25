@@ -155,50 +155,11 @@ const FilesPanel = ({ roomId }) => {
         </div>
       </div>
 
-      <div
-        {...getRootProps()}
-        className={`flex flex-1 flex-col items-center justify-center rounded-xl border border-dashed p-6 text-center transition-colors ${
-          isDragActive ? "border-accent bg-primary-soft" : "border-border"
-        }`}
-      >
-        <input {...getInputProps()} />
-
-        <Upload size={28} className="mb-3 text-text-muted" />
-
-        <p className="font-medium">
-          {busy
-            ? "Working on your files..."
-            : isDragActive
-              ? "Drop your files here"
-              : "Add your materials"}
-        </p>
-
-        <p className="mt-2 text-sm/6 text-text-muted">
-          Drag and drop PDFs, DOCX, PPTX, TXT, or Markdown files (up to 10 MB).
-        </p>
-
-        <button
-          type="button"
-          onClick={open}
-          disabled={busy}
-          className="mt-5 btn-primary-sm rounded-xl disabled:opacity-50"
-        >
-          <Plus size={16} />
-          Upload file
-        </button>
-      </div>
-
-      {error && (
-        <p role="alert" className="mt-4 text-sm text-red-500">
-          {error}
-        </p>
-      )}
-
       {loading ? (
-        <p className="mt-4 text-sm text-text-muted">Loading files...</p>
+        <p className="mb-4 text-sm text-text-muted">Loading files...</p>
       ) : (
         documents.length > 0 && (
-          <div className="mt-4 max-h-60 space-y-2 overflow-y-auto">
+          <div className="mb-4 max-h-60 space-y-2 overflow-y-auto scroll-styled">
             <h3 className="text-sm font-medium">Files ({documents.length})</h3>
 
             {documents.map((document) => {
@@ -248,6 +209,45 @@ const FilesPanel = ({ roomId }) => {
             })}
           </div>
         )
+      )}
+
+      <div
+        {...getRootProps()}
+        className={`flex flex-1 flex-col items-center justify-center rounded-xl border border-dashed p-6 text-center transition-colors ${
+          isDragActive ? "border-accent bg-primary-soft" : "border-border"
+        }`}
+      >
+        <input {...getInputProps()} />
+
+        <Upload size={28} className="mb-3 text-text-muted" />
+
+        <p className="font-medium">
+          {busy
+            ? "Working on your files..."
+            : isDragActive
+              ? "Drop your files here"
+              : "Add your materials"}
+        </p>
+
+        <p className="mt-2 text-sm/6 text-text-muted">
+          Drag and drop PDFs, DOCX, PPTX, TXT, or Markdown files (up to 10 MB).
+        </p>
+
+        <button
+          type="button"
+          onClick={open}
+          disabled={busy}
+          className="mt-5 btn-primary-sm rounded-xl disabled:opacity-50"
+        >
+          <Plus size={16} />
+          Upload file
+        </button>
+      </div>
+
+      {error && (
+        <p role="alert" className="mt-4 text-sm text-red-500">
+          {error}
+        </p>
       )}
     </section>
   );
