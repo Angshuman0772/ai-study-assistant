@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router";
 import { getStudyRoom } from "../services/studyRoomService";
 import { BookOpen, ArrowLeft } from "lucide-react";
-import NotesPanel from "../components/notes/NotesPanel";
+import NotesPanel from "../components/Notes/NotesPanel";
 import FocusTimer from "../components/FocusTimer";
 import AIChat from "../components/AIChat";
 import FilesPanel from "../components/FilesPanel";
