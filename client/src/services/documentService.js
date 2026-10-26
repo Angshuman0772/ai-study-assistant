@@ -23,7 +23,9 @@ export async function getDocuments(roomId) {
 
   const { data, error } = await supabase
     .from("documents")
-    .select("id, name, storage_path, mime_type, size_bytes, status, created_at")
+    .select(
+      "id, name, storage_path, mime_type, size_bytes, status, is_selected, created_at",
+    )
     .eq("room_id", roomId)
     .order("created_at", { ascending: false });
 
@@ -93,6 +95,22 @@ export async function deleteDocument(document) {
     .eq("id", document.id);
 
   if (error) throw error;
+}
+
+// Tick or untick a file for use as AI context.
+export async function setDocumentSelected(documentId, isSelected) {
+  const { data, error } = await supabase
+    .from("documents")
+    .update({ is_selected: isSelected })
+    .eq("id", documentId)
+    .select("id");
+
+  if (error) throw error;
+
+  // RLS can block an update without raising an error, so check a row changed.
+  if (!data || data.length === 0) {
+    throw new Error("Could not update this file.");
+  }
 }
 
 // Asks the Express server to extract, chunk and embed an uploaded file.

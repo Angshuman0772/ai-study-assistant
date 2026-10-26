@@ -15,6 +15,7 @@ import {
   deleteDocument,
   processDocument,
   MAX_FILE_SIZE,
+  setDocumentSelected,
 } from "../services/documentService";
 import UploadedFilesSkeleton from "./Skeletons/UploadedFilesSkeleton";
 
@@ -173,6 +174,31 @@ const FilesPanel = ({ roomId }) => {
     }
   };
 
+  const toggleSelected = async (document) => {
+    const next = !(document.is_selected ?? true);
+    const apply = (value) =>
+      setDocuments((current) =>
+        current.map((d) =>
+          d.id === document.id ? { ...d, is_selected: value } : d,
+        ),
+      );
+
+    setError("");
+    apply(next);
+
+    try {
+      await setDocumentSelected(document.id, next);
+    } catch (err) {
+      console.error("Selection update failed:", err);
+      apply(!next);
+      setError("Couldn't update the selection. Please try again.");
+    }
+  };
+
+  const selectedCount = documents.filter(
+    (d) => (d.is_selected ?? true) && d.status === "ready",
+  ).length;
+
   const hasDocuments = documents.length > 0;
 
   return (
@@ -261,7 +287,7 @@ const FilesPanel = ({ roomId }) => {
 
             <div className="mb-3 flex items-center justify-between gap-2">
               <h3 className="text-sm font-medium">
-                Files ({documents.length})
+                Files ({documents.length}) · {selectedCount} used by AI
               </h3>
 
               <span className="text-xs text-text-muted">
@@ -289,6 +315,19 @@ const FilesPanel = ({ roomId }) => {
                     key={document.id}
                     className="flex items-center gap-2 rounded-lg bg-surface-secondary p-2"
                   >
+                    <input
+                      type="checkbox"
+                      checked={document.is_selected ?? true}
+                      disabled={document.status !== "ready"}
+                      onChange={() => toggleSelected(document)}
+                      aria-label={`Use ${document.name} in AI answers`}
+                      title={
+                        document.status === "ready"
+                          ? "Include this file in AI answers"
+                          : "Process this file first"
+                      }
+                      className="size-4 shrink-0 cursor-pointer accent-primary disabled:cursor-not-allowed disabled:opacity-40"
+                    />
                     <FileText size={18} className="shrink-0 text-accent" />
 
                     <div className="min-w-0 flex-1">

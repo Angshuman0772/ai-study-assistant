@@ -1,6 +1,7 @@
 import ai from "../config/gemini.js";
 import supabaseAdmin from "../config/supabaseServer.js";
 import { retrieveContext } from "../services/retrieval.js";
+import { getSelectedDocumentIds } from "../services/selectedDocuments.js";
 
 const SYSTEM_INSTRUCTION = `
   You are an AI Study Assistant.
@@ -174,9 +175,15 @@ export const chatWithGemini = async (req, res) => {
   let excerpts = [];
 
   try {
+    const documentIds = await getSelectedDocumentIds({
+      userId: req.user.id,
+      roomId,
+    });
+
     excerpts = await retrieveContext({
       roomId,
       question: message.trim(),
+      documentIds,
     });
   } catch (error) {
     console.error("Retrieval failed, continuing without context:", {
